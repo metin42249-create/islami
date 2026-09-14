@@ -533,12 +533,12 @@
 
     <div class="info-panel" id="infoPanel" style="display: none;">
         <h3><i class="fa-solid fa-seedling"></i> Bu Uygulama Nedir?</h3>
-        <p>O anki durumunuza özel Peygamberimizin (S.A.V.) sünnetini ve güzel ahlakını samimi bir yoldaş diliyle hatırlatan dijital bir rehberdir.</p>
-        <p><strong>Nasıl Başlanır?</strong> Aşağıdaki mesaj kutusuna şu an ne yaptığınızı (örneğin: <em>"İşe gidiyorum", "Canım sıkkın", "Dizi seyrediyorum"</em>) veya sorunuzu yazıp göndermeniz yeterlidir.</p>
+        <p>O anki durumunuza özel Peygamberimizin (S.A.V.) sünnetini ve güzel ahlakını samimi bir yoldaş diliyle hatırlatan dijital bir rehberdir.[cite: 5]</p>
+        <p><strong>Nasıl Başlanır?</strong> Aşağıdaki mesaj kutusuna şu an ne yaptığınızı (örneğin: <em>"İşe gidiyorum", "Canım sıkkın", "Dizi seyrediyorum"</em>) veya sorunuzu yazıp göndermeniz yeterlidir.[cite: 5]</p>
         <ul>
-            <li><strong>AI Rehber:</strong> Profilinizi ve seçtiğiniz cevap tarzını dikkate alır.</li>
-            <li><strong>Durum Haritası:</strong> Konumunuzu görmenize ve harita üzerinde işaret bırakmanıza yardımcı olur.</li>
-            <li><strong>Nostr Canlı Akış:</strong> Merkeziyetsiz relay'lerden gelen halka açık notları gösterir ve NIP-07 cüzdan/eklenti ile yayınlamayı destekler.</li>
+            <li><strong>AI Rehber:</strong> Profilinizi ve seçtiğiniz cevap tarzını dikkate alır.[cite: 5]</li>
+            <li><strong>Durum Haritası:</strong> Konumunuzu görmenize ve harita üzerinde işaret bırakmanıza yardımcı olur.[cite: 5]</li>
+            <li><strong>Nostr Canlı Akış:</strong> Merkeziyetsiz relay'lerden gelen halka açık notları gösterir ve yayınlamayı destekler.[cite: 5]</li>
         </ul>
     </div>
 
@@ -638,7 +638,7 @@
                 <div class="message bot-message" id="welcomeMsg">
                     Selamun aleykum. Sağ üstteki <strong><i class="fa-solid fa-user-gear"></i> ayarlar (profil)</strong>
                     ikonundan durumunuzu güncelleyebilir, hemen üst kısımdan ise <strong>cevap tarzını</strong>
-                    belirleyebilirsiniz. Sohbet etmek veya soru sormak için aşağıya yazın.
+                    belirleyebilirsiniz. Sohbet etmek veya soru sormak için aşağıya yazın.[cite: 5]
                 </div>
             </div>
         </div>
@@ -646,17 +646,17 @@
         <div id="mapView" class="view-panel">
             <div id="map"></div>
             <div class="map-toolbar">
-                Haritada bir noktaya tıklayarak işaret ekleyebilirsiniz.
+                Haritada bir noktaya tıklayarak işaret ekleyebilirsiniz.[cite: 5]
             </div>
         </div>
 
         <div id="nostrView" class="view-panel">
             <div class="nostr-intro">
                 <strong>Nostr Ağı:</strong> Merkeziyetsiz röleler (Relay) üzerinden anonim sohbet ve
-                konum durumu paylaşımları.
+                konum durumu paylaşımları.[cite: 5]
             </div>
             <div class="nostr-feed" id="nostrFeed">
-                <div class="nostr-card">Ağa bağlanılıyor... Gönderiler bekleniyor.</div>
+                <div class="nostr-card">Ağa bağlanılıyor... Gönderiler bekleniyor.[cite: 5]</div>
             </div>
         </div>
     </div>
@@ -678,6 +678,7 @@
     let nostrInitialized = false;
     let nostrPubKey = null;
     let nostrSubscription = null;
+    let localKeyPair = null; // Nostr eklentisiz imzalama için eklendi
 
     const relays = [
         'wss://relay.damus.io',
@@ -930,34 +931,35 @@
     }
 
     // ---------------------------
-    // NOSTR
+    // NOSTR (Geçici/Anonim Anahtar Güncellemesi)
     // ---------------------------
     async function initNostr() {
         const badge = document.getElementById('nostrStatus');
         const feedContainer = document.getElementById('nostrFeed');
 
         if (!badge || !feedContainer) return;
-
         if (nostrInitialized) return;
-
-        if (window.nostr) {
-            try {
-                nostrPubKey = await window.nostr.getPublicKey();
-                badge.style.background = '#27ae60';
-                badge.innerHTML = '<i class="fa-solid fa-shield"></i> Nostr Bağlı';
-            } catch (e) {
-                console.warn('Nostr eklenti izni reddedildi.', e);
-                badge.innerHTML = '<i class="fa-solid fa-wifi"></i> Nostr Anonim (Yazma Engelli)';
-            }
-        } else {
-            badge.innerHTML = '<i class="fa-solid fa-wifi"></i> Nostr Anonim (Salt Okunur)';
-        }
 
         if (!window.NostrTools || !window.NostrTools.SimplePool) {
             feedContainer.innerHTML =
                 '<div class="nostr-card">Nostr kütüphanesi yüklenemedi. İnternet bağlantısını veya CDN erişimini kontrol edin.</div>';
             return;
         }
+
+        const { generatePrivateKey, getPublicKey } = window.NostrTools;
+
+        // Eklenti olmadan doğrudan yerel (ephemeral) anahtar yönetimi
+        let privKeyHex = localStorage.getItem(STORAGE_PREFIX + 'nostr_privkey');
+        if (!privKeyHex) {
+            privKeyHex = generatePrivateKey();
+            localStorage.setItem(STORAGE_PREFIX + 'nostr_privkey', privKeyHex);
+        }
+        
+        localKeyPair = privKeyHex;
+        nostrPubKey = getPublicKey(localKeyPair);
+
+        badge.style.background = '#27ae60';
+        badge.innerHTML = '<i class="fa-solid fa-shield"></i> Nostr Otomatik Aktif';
 
         pool = new window.NostrTools.SimplePool();
         nostrInitialized = true;
@@ -1013,35 +1015,34 @@
     }
 
     async function publishNostrEvent(content) {
-        if (!window.nostr) {
-            alert('Nostr ağına mesaj yazmak için nos2x veya Alby gibi bir Nostr eklentisi gereklidir.');
-            return;
-        }
-
         if (!nostrInitialized) {
             await initNostr();
         }
 
-        if (!pool) {
+        if (!localKeyPair || !pool) {
             alert('Nostr ağı henüz hazır değil. Lütfen birkaç saniye sonra tekrar deneyin.');
             return;
         }
 
         try {
+            const { finalizeEvent } = window.NostrTools;
+            
             let event = {
                 kind: 1,
+                pubkey: nostrPubKey,
                 created_at: Math.floor(Date.now() / 1000),
                 tags: [],
                 content: content
             };
 
-            event = await window.nostr.signEvent(event);
+            // Otomatik arka plan imzalama (Eklenti sormadan)
+            const signedEvent = finalizeEvent(event, localKeyPair);
 
             await Promise.all(
-                relays.map(relay => pool.publish([relay], event))
+                relays.map(relay => pool.publish([relay], signedEvent))
             );
 
-            alert('Mesaj Nostr ağına yayınlandı!');
+            alert('Mesajınız Nostr ağına başarıyla gönderildi!');
         } catch (e) {
             alert('Mesaj yayınlanırken hata oluştu: ' + (e.message || e));
         }
@@ -1058,7 +1059,7 @@
         const chatArea = document.getElementById('chatArea');
         chatArea.innerHTML = `
             <div class="message bot-message" id="welcomeMsg">
-                Sohbet sıfırlandı. Aşağıya mesajınızı yazarak yeniden başlayabilirsiniz.
+                Sohbet sıfırlandı. Aşağıya mesajınızı yazarak yeniden başlayabilirsiniz.[cite: 5]
             </div>`;
     }
 
