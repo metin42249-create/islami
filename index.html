@@ -3,30 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Manevi Yoldaş & Sünnet Rehberi</title>
+    <title>İslâmî Zeka - Nostr & Harita Destekli Manevi Yoldaş</title>
+    
+    <!-- CSS Kütüphaneleri -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- JS Kütüphaneleri -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/nostr-tools/lib/nostr.bundle.js"></script>
+
     <style>
         :root {
             --bg-color: #f0f4f1;
             --chat-bg: #ffffff;
             --primary: #1b4332;
             --primary-light: #2d6a4f;
+            --accent: #d4af37;
             --user-msg: #e8f5e9;
-            --user-msg-border: #c8e6c9;
             --bot-msg: #f8f9fa;
-            --bot-msg-border: #e9ecef;
             --text-color: #2b2d42;
-            --info-bg: #eef5f1;
-            --info-border: #c8e6c9;
-            --info-text: #1b4332;
-            --setup-bg: #fdfdfd;
-            --setup-border: #e2e8f0;
-            --input-border: #cbd5e1;
-            --input-bg: #ffffff;
+            --border-color: #e2e8f0;
             --shadow-color: rgba(0,0,0,0.06);
-            --scrollbar-thumb: #cbd5e1;
-            --transition: all 0.3s ease;
         }
 
         [data-theme="dark"] {
@@ -34,666 +33,402 @@
             --chat-bg: #1e1e1e;
             --primary: #0d2818;
             --primary-light: #2d6a4f;
+            --accent: #ffd166;
             --user-msg: #1b3a2b;
-            --user-msg-border: #2d6a4f;
             --bot-msg: #2d2d2d;
-            --bot-msg-border: #3d3d3d;
             --text-color: #e2e8f0;
-            --info-bg: #1a2e22;
-            --info-border: #2d6a4f;
-            --info-text: #a3e635;
-            --setup-bg: #252525;
-            --setup-border: #333333;
-            --input-border: #475569;
-            --input-bg: #2a2a2a;
+            --border-color: #333333;
             --shadow-color: rgba(0,0,0,0.4);
-            --scrollbar-thumb: #4a5568;
         }
 
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            margin: 0;
-            padding: 0;
             display: flex;
             justify-content: center;
             height: 100vh;
             height: 100dvh;
             overflow: hidden;
-            transition: var(--transition);
         }
 
         .container {
             width: 100%;
-            max-width: 850px;
+            max-width: 900px;
             background: var(--chat-bg);
             display: flex;
             flex-direction: column;
             height: 100%;
             box-shadow: 0 10px 40px var(--shadow-color);
-            transition: var(--transition);
         }
 
         header {
             background-color: var(--primary);
             color: white;
-            padding: 16px 24px;
+            padding: 14px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             z-index: 10;
-            flex-shrink: 0;
         }
 
         header h1 {
-            margin: 0;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            letter-spacing: 0.5px;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 16px;
-        }
-
-        .icon-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.2rem;
-            cursor: pointer;
-            opacity: 0.8;
-            transition: var(--transition);
-        }
-
-        .icon-btn:hover {
-            opacity: 1;
-            transform: scale(1.1);
-        }
-
-        .info-panel {
-            background-color: var(--info-bg);
-            border-bottom: 1px solid var(--info-border);
-            padding: 16px 24px;
-            font-size: 0.9rem;
-            color: var(--info-text);
-            line-height: 1.6;
-            flex-shrink: 0;
-        }
-
-        .info-panel h3 { margin: 0 0 8px 0; font-size: 0.95rem; }
-        .info-panel ul { margin: 6px 0 0 0; padding-left: 20px; }
-
-        .setup-panel {
-            padding: 20px 24px;
-            background-color: var(--setup-bg);
-            border-bottom: 1px solid var(--setup-border);
-            display: none;
-            flex-direction: column;
-            gap: 16px;
-            box-shadow: inset 0 -5px 15px var(--shadow-color);
-            flex-shrink: 0;
-            overflow-y: auto;
-            max-height: 40vh;
-        }
-
-        .setup-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 600;
-            color: var(--primary-light);
-            font-size: 0.95rem;
-            border-bottom: 1px solid var(--setup-border);
-            padding-bottom: 8px;
-        }
-
-        .setup-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 12px 16px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        label {
-            font-size: 0.75rem;
-            margin-bottom: 6px;
-            font-weight: 700;
-            color: var(--primary-light);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        input, select {
-            padding: 10px 14px;
-            border: 1px solid var(--input-border);
-            background-color: var(--input-bg);
-            color: var(--text-color);
-            border-radius: 8px;
-            font-size: 0.92rem;
-            outline: none;
-            transition: var(--transition);
-        }
-
-        input:focus, select:focus {
-            border-color: var(--primary-light);
-            box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.15);
-        }
-
-        .btn-save {
-            background-color: var(--primary-light);
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            padding: 10px 16px;
-            border-radius: 8px;
-            align-self: flex-start;
-            transition: var(--transition);
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .btn-save:hover {
-            background-color: var(--primary);
-            transform: translateY(-1px);
+        .nav-tabs {
+            display: flex;
+            background: var(--primary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 10px;
+            gap: 5px;
         }
 
-        .response-style-panel {
-            background-color: var(--setup-bg);
-            border-bottom: 1px solid var(--setup-border);
-            padding: 12px 24px;
+        .tab-btn {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.7);
+            padding: 10px 16px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-            box-shadow: 0 2px 5px var(--shadow-color);
-            z-index: 5;
-            flex-shrink: 0;
+            gap: 6px;
         }
 
-        .response-style-panel label {
-            margin: 0;
-            color: var(--primary-light);
-            font-weight: 700;
-            font-size: 0.8rem;
-            white-space: nowrap;
+        .tab-btn.active {
+            color: white;
+            border-bottom-color: var(--accent);
         }
 
-        .response-style-panel select, .response-style-panel input {
+        .main-content {
             flex: 1;
-            min-width: 250px;
-            padding: 8px 14px;
-            border-radius: 6px;
+            position: relative;
+            overflow: hidden;
         }
 
+        .view-panel {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            display: none;
+            flex-direction: column;
+            background: var(--chat-bg);
+        }
+
+        .view-panel.active { display: flex; }
+
+        /* Sohbet Ekranı */
         .chat-area {
             flex: 1;
-            padding: 24px;
+            padding: 20px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 16px;
-            scroll-behavior: smooth;
+            gap: 12px;
         }
 
         .message {
             max-width: 85%;
-            padding: 14px 20px;
-            border-radius: 16px;
-            line-height: 1.6;
-            font-size: 0.98rem;
-            box-shadow: 0 2px 8px var(--shadow-color);
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            box-shadow: 0 1px 3px var(--shadow-color);
         }
 
-        .message p { margin: 0 0 8px 0; }
-        .message p:last-child { margin-bottom: 0; }
-        .message ul, .message ol { margin: 6px 0; padding-left: 20px; }
+        .user-message { align-self: flex-end; background: var(--user-msg); }
+        .bot-message { align-self: flex-start; background: var(--bot-msg); }
 
-        .user-message {
-            align-self: flex-end;
-            background-color: var(--user-msg);
-            border: 1px solid var(--user-msg-border);
-            border-bottom-right-radius: 4px;
-        }
+        /* Harita Ekranı */
+        #map { width: 100%; height: 100%; z-index: 1; }
 
-        .bot-message {
-            align-self: flex-start;
-            background-color: var(--bot-msg);
-            border: 1px solid var(--bot-msg-border);
-            border-bottom-left-radius: 4px;
-        }
-
-        .input-area {
-            padding: 16px 24px;
-            border-top: 1px solid var(--setup-border);
+        /* Nostr Akış Ekranı */
+        .nostr-feed {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
             display: flex;
-            gap: 12px;
-            background-color: var(--chat-bg);
-            align-items: center;
-            flex-shrink: 0;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .nostr-card {
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            border-radius: 8px;
+            background: var(--bot-msg);
+            font-size: 0.85rem;
+        }
+
+        .nostr-card .pubkey {
+            font-size: 0.75rem;
+            color: var(--primary-light);
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        /* Giriş Alanı */
+        .input-area {
+            padding: 12px 16px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 8px;
+            background: var(--chat-bg);
         }
 
         .input-area input {
             flex: 1;
-            min-width: 0;
-            border-radius: 30px;
-            padding: 14px 20px;
-            background-color: var(--input-bg);
-            border: 1px solid var(--input-border);
-            font-size: 0.95rem;
-            box-shadow: inset 0 2px 4px var(--shadow-color);
+            padding: 12px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-color);
+            color: var(--text-color);
+            outline: none;
         }
 
         .btn-send {
-            background-color: var(--primary-light);
+            background: var(--primary-light);
             color: white;
             border: none;
+            padding: 0 20px;
+            border-radius: 20px;
             cursor: pointer;
             font-weight: 600;
-            padding: 14px 24px;
-            border-radius: 30px;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-shrink: 0;
-            white-space: nowrap;
         }
 
-        .btn-send:hover {
-            background-color: var(--primary);
-            box-shadow: 0 4px 12px rgba(45, 106, 79, 0.3);
-            transform: translateY(-1px);
+        .nostr-badge {
+            font-size: 0.7rem;
+            background: #8e44ad;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: auto;
         }
-
-        .typing-indicator {
-            display: flex;
-            gap: 5px;
-            align-items: center;
-            padding: 8px 0;
-        }
-        .typing-indicator span {
-            width: 8px; height: 8px;
-            background-color: var(--primary-light);
-            border-radius: 50%;
-            animation: bounce 1.4s infinite ease-in-out both;
-        }
-        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
-        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
-
-        @keyframes bounce {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1.0); }
-        }
-
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1><i class="fa-solid fa-moon"></i> İslâmî Zeka - Manevi Yoldaş</h1>
-        <div class="header-actions">
-            <button class="icon-btn" onclick="toggleTheme()" id="themeBtn" title="Temayı Değiştir">
-                <i class="fa-solid fa-sun"></i>
-            </button>
-            <button class="icon-btn" onclick="toggleInfo()" title="Nedir / Nasıl Kullanılır?">
-                <i class="fa-solid fa-circle-info"></i>
-            </button>
-            <button class="icon-btn" onclick="resetChat()" title="Sohbeti Sıfırla">
-                <i class="fa-solid fa-rotate-right"></i>
-            </button>
-            <button class="icon-btn" onclick="toggleSetup()" title="Profil Ayarlarını Göster/Gizle">
-                <i class="fa-solid fa-user-gear"></i>
+        <h1><i class="fa-solid fa-kaaba"></i> Manevi Yoldaş</h1>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <span id="nostrStatus" class="nostr-badge"><i class="fa-solid fa-network-wired"></i> Nostr Pasif</span>
+            <button onclick="toggleTheme()" style="background:none; border:none; color:white; cursor:pointer;">
+                <i class="fa-solid fa-moon"></i>
             </button>
         </div>
     </header>
 
-    <div class="info-panel" id="infoPanel" style="display: none;">
-        <h3><i class="fa-solid fa-seedling"></i> Bu Uygulama Nedir?</h3>
-        <p>O anki durumunuza özel Peygamberimizin (S.A.V.) sünnetini ve güzel ahlakını samimi bir yoldaş diliyle hatırlatan dijital bir rehberdir.</p>
-        <p><strong>Nasıl Başlanır?</strong> Aşağıdaki mesaj kutusuna şu an ne yaptığınızı (örneğin: <em>"İşe gidiyorum", "Canım sıkkın", "Dizi seyrediyorum"</em>) veya sorunuzu yazıp göndermeniz yeterlidir.</p>
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('chat')"><i class="fa-solid fa-comment-dots"></i> AI Rehber</button>
+        <button class="tab-btn" onclick="switchTab('map')"><i class="fa-solid fa-map-location-dot"></i> Durum Haritası</button>
+        <button class="tab-btn" onclick="switchTab('nostr')"><i class="fa-solid fa-users-rays"></i> Nostr Canlı Akış</button>
     </div>
 
-    <!-- KOMPAKT AYARLAR PANELİ -->
-    <div class="setup-panel" id="setupPanel">
-        <div class="setup-header">
-            <span>Kişisel Profil (Bu bilgiler cihazınızda saklanır)</span>
-            <span style="cursor:pointer;" onclick="toggleSetup()"><i class="fa-solid fa-xmark"></i></span>
-        </div>
-        <div class="setup-grid">
-            <div class="form-group">
-                <label for="city">Şehir:</label>
-                <input type="text" id="city" value="İstanbul" placeholder="Örn: Ankara">
-            </div>
-            <div class="form-group">
-                <label for="environment">Bulunduğunuz Ortam:</label>
-                <select id="environment" onchange="handleEnvironmentChange()">
-                    <option value="Ev">Ev</option>
-                    <option value="İş Yeri / Ofis">İş Yeri / Ofis</option>
-                    <option value="Okul / Üniversite">Okul / Üniversite</option>
-                    <option value="Yolculuk / Yolda">Yolculuk / Yolda</option>
-                    <option value="Dışarıda / Sosyal Ortam">Dışarıda / Sosyal Ortam</option>
-                    <option value="Diğer">Diğer (Elle Giriş)</option>
-                </select>
-            </div>
-            <div class="form-group" id="customEnvGroup" style="display: none;">
-                <label for="customEnvironment">Ortamı Belirtin:</label>
-                <input type="text" id="customEnvironment" placeholder="Ortamı yazın...">
-            </div>
-            <div class="form-group">
-                <label for="gender">Cinsiyet:</label>
-                <select id="gender">
-                    <option value="Erkek">Erkek</option>
-                    <option value="Kadın">Kadın</option>
-                    <option value="Belirtmek İstemiyorum">Belirtmek İstemiyorum</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="ageGroup">Yaş Grubu:</label>
-                <select id="ageGroup">
-                    <option value="Çocuk (7-12 yaş)">Çocuk (7-12 yaş)</option>
-                    <option value="Genç (13-18 yaş)">Genç (13-18 yaş)</option>
-                    <option value="Yetişkin (19-64 yaş)" selected>Yetişkin (19-64 yaş)</option>
-                    <option value="Yaşlı (65+ yaş)">Yaşlı (65+ yaş)</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="healthStatus">Sağlık Durumu:</label>
-                <select id="healthStatus">
-                    <option value="Sağlıklı" selected>Sağlıklı / Sıhhatli</option>
-                    <option value="Hasta / Yorgun">Hasta / Rahatsız / Yorgun</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="financialStatus">Maddi Durum:</label>
-                <select id="financialStatus">
-                    <option value="Orta Hal / Normal" selected>Orta Hal / Normal</option>
-                    <option value="Dar Gelirli">Dar Gelirli</option>
-                    <option value="Varlıklı">Varlıklı</option>
-                </select>
+    <div class="main-content">
+        <!-- 1. AI Sohbet Paneli -->
+        <div id="chatView" class="view-panel active">
+            <div class="chat-area" id="chatArea">
+                <div class="message bot-message">
+                    Selamun aleykum. Peygamber Efendimizin (S.A.V.) sünneti ışığında manevi rehberiniz olarak buradayım. Konumunuzu haritada paylaşabilir veya sorularınızı iletebilirsiniz.
+                </div>
             </div>
         </div>
-        <button class="btn-save" onclick="saveSettingsAndClose()">
-            <i class="fa-solid fa-floppy-disk"></i> Profili Kaydet
-        </button>
-    </div>
 
-    <!-- CEVAP ÇEŞİDİ / SORU TARZI PANELİ -->
-    <div class="response-style-panel">
-        <label for="responseStyle"><i class="fa-solid fa-list-check"></i> Cevap / Sohbet Tarzı:</label>
-        <select id="responseStyle" onchange="handleStyleChange()">
-            <option value="standart">Sohbet & Yoldaşlık (Varsayılan)</option>
-            <option value="soru_cevap">Bu soruyu Peygamberimiz (S.A.V.) nasıl cevaplardı?</option>
-            <option value="yerimde_olsa">Peygamberimiz benim yerimde olsaydı ne yapardı?</option>
-            <option value="bunun_yerine">Şu an yaptığımın yerine O (S.A.V.) ne yapardı?</option>
-            <option value="bu_saatte">Peygamberimiz şu saatlerde ne ile meşgul olurdu?</option>
-            <option value="diger">Diğer (Elle Giriniz)</option>
-        </select>
-        <input type="text" id="customResponseStyle" placeholder="Nasıl bir tarzda cevap istiyorsunuz?" style="display: none;">
-    </div>
+        <!-- 2. Konum Durum Haritası -->
+        <div id="mapView" class="view-panel">
+            <div id="map"></div>
+        </div>
 
-    <div class="chat-area" id="chatArea">
-        <div class="message bot-message" id="welcomeMsg">
-            Selamun aleykum. Sağ üstteki <strong><i class="fa-solid fa-user-gear"></i> ayarlar (profil)</strong> ikonundan durumunuzu güncelleyebilir, hemen üst kısımdan ise <strong>cevap tarzını</strong> belirleyebilirsiniz. Sohbet etmek veya soru sormak için aşağıya yazın.
+        <!-- 3. Nostr Kullanıcılar Arası Akış -->
+        <div id="nostrView" class="view-panel">
+            <div style="padding: 10px; border-bottom: 1px solid var(--border-color); font-size: 0.8rem; background: var(--bg-color);">
+                <strong>Nostr Ağı:</strong> Merkeziyetsiz röleler (Relay) üzerinden anonim sohbet ve konum durumu paylaşımları.
+            </div>
+            <div class="nostr-feed" id="nostrFeed">
+                <div class="nostr-card">Ağa bağlanılıyor... Gönderiler bekleniyor.</div>
+            </div>
         </div>
     </div>
 
+    <!-- Ortak Mesaj Giriş Alanı -->
     <div class="input-area">
-        <input type="text" id="userInput" placeholder="Mesajınızı veya sorunuzu yazın..." onkeypress="handleKeyPress(event)">
-        <button class="btn-send" id="sendBtn" onclick="sendMessage()">
-            Gönder <i class="fa-solid fa-paper-plane"></i>
-        </button>
+        <input type="text" id="userInput" placeholder="Mesajınızı yazın..." onkeypress="handleKey(event)">
+        <button class="btn-send" onclick="handleSend()"><i class="fa-solid fa-paper-plane"></i></button>
     </div>
 </div>
 
 <script>
-    let chatHistory = [];
-    const STORAGE_PREFIX = 'manevi_yoldas_';
+    let currentTab = 'chat';
+    let map, userMarker;
+    let pool, relays = ['wss://relay.damus.io', 'wss://nos.lol'];
+    let nostrPubKey = null;
 
-    function initTheme() {
-        const savedTheme = localStorage.getItem(STORAGE_PREFIX + 'theme');
-        if (savedTheme) {
-            document.documentElement.setAttribute('data-theme', savedTheme);
-            updateThemeIcon(savedTheme);
-        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.documentElement.setAttribute('data-theme', 'dark');
-            updateThemeIcon('dark');
+    // TAB DEĞİŞTİRME
+    function switchTab(tab) {
+        currentTab = tab;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+
+        if(tab === 'chat') {
+            document.querySelectorAll('.tab-btn')[0].classList.add('active');
+            document.getElementById('chatView').classList.add('active');
+        } else if(tab === 'map') {
+            document.querySelectorAll('.tab-btn')[1].classList.add('active');
+            document.getElementById('mapView').classList.add('active');
+            initMap();
+        } else if(tab === 'nostr') {
+            document.querySelectorAll('.tab-btn')[2].classList.add('active');
+            document.getElementById('nostrView').classList.add('active');
+            initNostr();
+        }
+    }
+
+    // HARİTA BAŞLATMA (Leaflet)
+    function initMap() {
+        if (map) { map.invalidateSize(); return; }
+
+        map = L.map('map').setView([41.0082, 28.9784], 12); // Varsayılan: İstanbul
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        // Kullanıcının Anlık Konumunu Al
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(pos => {
+                const lat = pos.coords.latitude;
+                const lng = pos.coords.longitude;
+                map.setView([lat, lng], 13);
+                
+                userMarker = L.marker([lat, lng]).addTo(map)
+                    .bindPopup("<b>Sizin Konumunuz</b><br>Manevi Yoldaş Aktif")
+                    .openPopup();
+            });
+        }
+
+        // Haritaya Tıklayınca İşaretçi Ekleme / Durum Paylaşma
+        map.on('click', function(e) {
+            L.marker([e.latlng.lat, e.latlng.lng]).addTo(map)
+                .bindPopup(`Paylaşılan Durum Konumu<br>Lat: ${e.latlng.lat.toFixed(4)}, Lng: ${e.latlng.lng.toFixed(4)}`);
+        });
+    }
+
+    // NOSTR ENTEGRASYONU (Merkeziyetsiz İletişim)
+    async function initNostr() {
+        const badge = document.getElementById('nostrStatus');
+        
+        // Nostr NIP-07 Eklentisi (Alby / Nos2x vb.) Kontrolü
+        if (window.nostr) {
+            try {
+                nostrPubKey = await window.nostr.getPublicKey();
+                badge.style.background = "#27ae60";
+                badge.innerHTML = `<i class="fa-solid fa-shield"></i> Nostr Bağlı`;
+            } catch (e) {
+                console.error("Nostr eklenti izni reddedildi.");
+            }
+        } else {
+            badge.innerHTML = `<i class="fa-solid fa-wifi"></i> Nostr Anonim (Salt Okunur)`;
+        }
+
+        // Nostr Akışını Dinleme (Relay Aboneliği)
+        if (typeof Window.NostrTools !== 'undefined' || window.NostrTools) {
+            const { SimplePool } = window.NostrTools;
+            pool = new SimplePool();
+            
+            const feedContainer = document.getElementById('nostrFeed');
+            feedContainer.innerHTML = '';
+
+            let sub = pool.subscribeMany(
+                relays,
+                [{ kinds: [1], limit: 10 }],
+                {
+                    onevent(event) {
+                        const card = document.createElement('div');
+                        card.className = 'nostr-card';
+                        card.innerHTML = `
+                            <div class="pubkey">${event.pubkey.substring(0, 10)}...</div>
+                            <div>${event.content}</div>
+                        `;
+                        feedContainer.prepend(card);
+                    }
+                }
+            );
+        }
+    }
+
+    // MESAJ GÖNDERME KONTROLÜ
+    function handleSend() {
+        const input = document.getElementById('userInput');
+        const text = input.value.trim();
+        if (!text) return;
+
+        if (currentTab === 'chat') {
+            appendChatMessage(text, 'user-message');
+            input.value = '';
+            processAiResponse(text);
+        } else if (currentTab === 'nostr') {
+            publishNostrEvent(text);
+            input.value = '';
+        } else {
+            alert("Haritaya durum eklemek için haritada bir noktaya tıklayabilirsiniz.");
+        }
+    }
+
+    function handleKey(e) { if (e.key === 'Enter') handleSend(); }
+
+    function appendChatMessage(text, className) {
+        const area = document.getElementById('chatArea');
+        const div = document.createElement('div');
+        div.className = `message ${className}`;
+        div.innerHTML = marked.parse(text);
+        area.appendChild(div);
+        area.scrollTop = area.scrollHeight;
+    }
+
+    // PEYGAMBERİMİZİN SÜNNETİNE DAYALI AI CEVAP SİMÜLASYONU / BACKEND ÇAĞRISI
+    async function processAiResponse(prompt) {
+        // İlgili backend endpoint'inize veya Gemini API'nize bağlayabilirsiniz.
+        setTimeout(() => {
+            const botReply = `**Sünnet-i Seniyye Rehberliği:**\n\n"${prompt}" konulu sorunuza istinaden; Peygamber Efendimiz (S.A.V.) insanlara daima kolaylık göstermeyi, tatlı dille yaklaşmayı ve sabrı tavsiye ederdi. \n\n*Günün Tavsiyesi:* Karşılaştığınız her durumda tebessüm etmek de bir sadakadır.`;
+            appendChatMessage(botReply, 'bot-message');
+        }, 1000);
+    }
+
+    // NOSTR ÜZERİNE MESAJ YAYINLAMA
+    async function publishNostrEvent(content) {
+        if (!window.nostr) {
+            alert("Nostr ağına mesaj yazmak için nos2x veya Alby gibi bir Nostr eklentisi gereklidir.");
+            return;
+        }
+
+        try {
+            let event = {
+                kind: 1,
+                created_at: Math.floor(Date.now() / 1000),
+                tags: [],
+                content: content
+            };
+            event = await window.nostr.signEvent(event);
+            await Promise.all(relays.map(r => pool.publish([r], event)));
+            alert("Mesaj Nostr ağına yayınlandı!");
+        } catch (e) {
+            alert("Mesaj imzalanırken hata oluştu: " + e.message);
         }
     }
 
     function toggleTheme() {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem(STORAGE_PREFIX + 'theme', newTheme);
-        updateThemeIcon(newTheme);
+        const current = document.documentElement.getAttribute('data-theme');
+        document.documentElement.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
     }
-
-    function updateThemeIcon(theme) {
-        const themeBtn = document.getElementById('themeBtn');
-        themeBtn.innerHTML = theme === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
-    }
-
-    function loadSettings() {
-        const fields = ['city', 'environment', 'customEnvironment', 'gender', 'ageGroup', 'healthStatus', 'financialStatus'];
-        let hasSavedData = false;
-        
-        fields.forEach(field => {
-            const val = localStorage.getItem(STORAGE_PREFIX + field);
-            if (val !== null) {
-                document.getElementById(field).value = val;
-                hasSavedData = true;
-            }
-        });
-
-        handleEnvironmentChange();
-
-        const panel = document.getElementById("setupPanel");
-        panel.style.display = hasSavedData ? "none" : "flex";
-    }
-
-    function saveSettingsLocally() {
-        const fields = ['city', 'environment', 'customEnvironment', 'gender', 'ageGroup', 'healthStatus', 'financialStatus'];
-        fields.forEach(field => {
-            localStorage.setItem(STORAGE_PREFIX + field, document.getElementById(field).value);
-        });
-    }
-
-    function saveSettingsAndClose() {
-        saveSettingsLocally();
-        toggleSetup();
-    }
-
-    function toggleSetup() {
-        const panel = document.getElementById("setupPanel");
-        panel.style.display = (panel.style.display === "none" || panel.style.display === "") ? "flex" : "none";
-    }
-
-    function toggleInfo() {
-        const panel = document.getElementById("infoPanel");
-        panel.style.display = (panel.style.display === "none" || panel.style.display === "") ? "block" : "none";
-    }
-
-    function handleEnvironmentChange() {
-        const envSelect = document.getElementById("environment");
-        const customEnvGroup = document.getElementById("customEnvGroup");
-        customEnvGroup.style.display = envSelect.value === "Diğer" ? "flex" : "none";
-    }
-    
-    function handleStyleChange() {
-        const styleSelect = document.getElementById("responseStyle");
-        const customInput = document.getElementById("customResponseStyle");
-        if (styleSelect.value === "diger") {
-            customInput.style.display = "block";
-        } else {
-            customInput.style.display = "none";
-        }
-    }
-
-    function resetChat() {
-        if (confirm("Sohbet geçmişi temizlensin mi?")) {
-            chatHistory = [];
-            document.getElementById("chatArea").innerHTML = `
-                <div class="message bot-message" id="welcomeMsg">
-                    Sohbet sıfırlandı. Aşağıya mesajınızı yazarak yeniden başlayabilirsiniz.
-                </div>`;
-        }
-    }
-
-    async function sendMessage() {
-        const inputField = document.getElementById("userInput");
-        const userText = inputField.value.trim();
-
-        if (!userText) return;
-
-        saveSettingsLocally();
-        appendMessage(userText, "user-message");
-        inputField.value = "";
-
-        // İNGİLİZCE MODEL YÖNERGELERİ (KULLANICI DİLİNE DİNAMİK UYARLAMA)
-        const styleSelect = document.getElementById("responseStyle").value;
-        const customStyle = document.getElementById("customResponseStyle").value.trim();
-        
-        let styleInstruction = "";
-        if (styleSelect === "soru_cevap") {
-             styleInstruction = "Task: Speak from the perspective of someone who knows Prophet Muhammad (PBUH) very deeply (do not explicitly introduce yourself). Respond in the same language as the user's input using the framework: 'The Prophet (PBUH) would answer this question like this...'";
-        } else if (styleSelect === "yerimde_olsa") {
-             styleInstruction = "Task: Speak from the perspective of someone who knows Prophet Muhammad (PBUH) very deeply (do not explicitly introduce yourself). Respond in the same language as the user's input using the framework: 'If the Prophet (PBUH) were in your situation right now, he would...'";
-        } else if (styleSelect === "bunun_yerine") {
-             styleInstruction = "Task: Speak from the perspective of someone who knows Prophet Muhammad (PBUH) very deeply (do not explicitly introduce yourself). Offer a constructive alternative in the same language as the user's input using the framework: 'Instead of what you are doing right now, the Prophet (PBUH) would do...'";
-        } else if (styleSelect === "bu_saatte") {
-             styleInstruction = "Task: Speak from the perspective of someone who knows Prophet Muhammad (PBUH) very deeply (do not explicitly introduce yourself). Respond in the same language as the user's input referring to his daily routine: 'At this specific time of day, the Prophet (PBUH) usually occupied himself with...'";
-        } else if (styleSelect === "diger" && customStyle !== "") {
-             styleInstruction = `Task: Speak from the perspective of someone who knows Prophet Muhammad (PBUH) very deeply (do not explicitly introduce yourself). Respond in the same language as the user's input adhering strictly to this user-defined style preference: '${customStyle}'.`;
-        } else {
-             styleInstruction = "Task: Act as a warm, supportive spiritual companion who knows the Prophet (PBUH) deeply. Provide gentle guidance in the same language as the user's input and make the user feel genuinely supported.";
-        }
-
-        const systemNote = `\n\n[SYSTEM INSTRUCTION: ${styleInstruction}]`;
-
-        // İLK MESAJ: İNGİLİZCE SİSTEM İSTEMİ (DYNAMIC LANGUAGE MANDATE)
-        if (chatHistory.length === 0) {
-            const city = document.getElementById("city").value.trim() || "Not specified";
-            const envSelect = document.getElementById("environment").value;
-            const customEnv = document.getElementById("customEnvironment").value.trim();
-            const environment = (envSelect === "Diğer" && customEnv !== "") ? customEnv : envSelect;
-            const gender = document.getElementById("gender").value;
-            const ageGroup = document.getElementById("ageGroup").value;
-            const healthStatus = document.getElementById("healthStatus").value;
-            const financialStatus = document.getElementById("financialStatus").value;
-
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
-            const dateString = now.toLocaleDateString('tr-TR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-
-            const systemPrompt = `You are a sincere spiritual mentor who embodies the morality and manners of Prophet Muhammad (PBUH) and his companions.
-
-CRITICAL MANDATE: ALWAYS DETECT AND RESPOND IN THE EXACT SAME LANGUAGE USED BY THE USER IN THEIR MESSAGE.
-
-User Context & Profile:
-- City: ${city}
-- Current Date / Day: ${dateString}
-- Local Time: ${timeString}
-- Current Environment: ${environment}
-- Gender: ${gender}
-- Age Group: ${ageGroup}
-- Health Status: ${healthStatus}
-- Financial Status: ${financialStatus}
-
-Take the user's profile and current situation into consideration when framing your response.
-User Action / Query: "${userText}"
-${systemNote}`;
-
-            chatHistory.push({ role: "user", parts: [{ text: systemPrompt }] });
-            
-            const welcomeMsg = document.getElementById("welcomeMsg");
-            if(welcomeMsg) welcomeMsg.style.display = 'none';
-
-        } else {
-            chatHistory.push({ role: "user", parts: [{ text: userText + systemNote }] });
-        }
-
-        showLoadingIndicator();
-        await fetchGeminiResponse();
-    }
-
-    async function fetchGeminiResponse() {
-        const url = '/api/gemini'; 
-
-        try {
-            const response = await fetch(url, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ contents: chatHistory })
-            });
-
-            const data = await response.json();
-            removeLoadingIndicator();
-
-            if (data.error) throw new Error(typeof data.error === 'string' ? data.error : (data.error.message || "Bir hata oluştu."));
-
-            let botReply = data.candidates[0].content.parts[0].text;
-            
-            chatHistory.push({ role: "model", parts: [{ text: botReply }] });
-
-            appendMessage(botReply, "bot-message");
-
-        } catch (error) {
-            removeLoadingIndicator();
-            appendMessage("Hata oluştu: " + error.message, "bot-message");
-        }
-    }
-
-    function appendMessage(text, className) {
-        const chatArea = document.getElementById("chatArea");
-        const msgDiv = document.createElement("div");
-        msgDiv.className = `message ${className}`;
-        msgDiv.innerHTML = marked.parse(text);
-        chatArea.appendChild(msgDiv);
-        chatArea.scrollTop = chatArea.scrollHeight;
-    }
-
-    function showLoadingIndicator() {
-        const chatArea = document.getElementById("chatArea");
-        const loadingDiv = document.createElement("div");
-        loadingDiv.id = "loadingIndicator";
-        loadingDiv.className = "message bot-message";
-        loadingDiv.innerHTML = `<div class="typing-indicator"><span></span><span></span><span></span></div>`;
-        chatArea.appendChild(loadingDiv);
-        chatArea.scrollTop = chatArea.scrollHeight;
-    }
-
-    function removeLoadingIndicator() {
-        const indicator = document.getElementById("loadingIndicator");
-        if (indicator) indicator.remove();
-    }
-
-    function handleKeyPress(event) {
-        if (event.key === "Enter") sendMessage();
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-        initTheme();
-        loadSettings();
-    });
 </script>
-
 </body>
 </html>
