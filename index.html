@@ -158,7 +158,7 @@
             display: flex;
         }
 
-        /* 1. YÖNLENDİRME MODU TASARIMI */
+        /* YÖNLENDİRME MODU TASARIMI */
         .guidance-container {
             padding: 16px;
             display: flex;
@@ -277,7 +277,7 @@
         .guide-card h3 { font-size: 0.95rem; font-weight: 600; }
         .guide-card p { font-size: 0.78rem; opacity: 0.8; }
 
-        /* 2. SOHBET MODU TASARIMI */
+        /* SOHBET MODU TASARIMI */
         .chat-container {
             display: flex;
             flex-direction: column;
@@ -289,19 +289,27 @@
             border-bottom: 1px solid var(--border-color);
             padding: 10px 16px;
             display: flex;
-            align-items: center;
-            gap: 10px;
+            flex-direction: column;
+            gap: 8px;
             font-size: 0.85rem;
             flex-shrink: 0;
         }
 
-        .response-style-bar select {
+        .style-select-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .response-style-bar select, .response-style-bar input {
             flex: 1;
-            padding: 6px 10px;
-            border-radius: 6px;
+            padding: 8px 12px;
+            border-radius: 8px;
             border: 1px solid var(--border-color);
             background: var(--card-bg);
             color: var(--text-color);
+            font-size: 0.85rem;
+            outline: none;
         }
 
         .chat-messages {
@@ -479,7 +487,7 @@
         <!-- 1. YÖNLENDİRME MODU -->
         <div class="view-panel active" id="guidanceView">
             <div class="guidance-container">
-                <!-- Şehir Durum Çubuğu (Konum Yerine) -->
+                <!-- Şehir Durum Çubuğu -->
                 <div class="location-status-bar">
                     <div class="location-info">
                         <i class="fa-solid fa-city"></i> Seçili Şehir: <span id="locStatusText">Kırıkkale</span>
@@ -529,18 +537,25 @@
             </div>
         </div>
 
-        <!-- 2. SOHBET MODU (Detaylı AI Diyaloğu) -->
+        <!-- 2. SOHBET MODU -->
         <div class="view-panel" id="chatView">
             <div class="chat-container">
                 <div class="response-style-bar">
-                    <i class="fa-solid fa-sliders"></i>
-                    <label for="responseStyle">Rehber Yaklaşımı:</label>
-                    <select id="responseStyle">
-                        <option value="standart">Sohbet & Yoldaşlık (Samimi)</option>
-                        <option value="soru_cevap">Peygamberimiz (S.A.V.) nasıl cevaplardı?</option>
-                        <option value="yerimde_olsa">Peygamberimiz benim yerimde olsa ne yapardı?</option>
-                        <option value="bunun_yerine">Şu an yaptığımın yerine O (S.A.V.) ne yapardı?</option>
-                    </select>
+                    <div class="style-select-wrapper">
+                        <i class="fa-solid fa-sliders"></i>
+                        <label for="responseStyle">Rehber Yaklaşımı:</label>
+                        <select id="responseStyle" onchange="handleStyleChange()">
+                            <option value="standart">Sohbet & Yoldaşlık (Samimi)</option>
+                            <option value="soru_cevap">Peygamberimiz (S.A.V.) bu soruya nasıl cevap verirdi?</option>
+                            <option value="yerimde_olsa">Peygamberimiz benim yerimde/durumumda olsa ne yapardı?</option>
+                            <option value="bunun_yerine">Şu an yaptığımın/düşündüğümün yerine Sünnetteki doğrusu nedir?</option>
+                            <option value="diger">Diğer (Kendi Yönlendirmeni Yaz)</option>
+                        </select>
+                    </div>
+                    <!-- Özel rehber yaklaşımı girişi -->
+                    <div id="customStyleGroup" style="display: none; padding-top: 4px;">
+                        <input type="text" id="customStyleInput" placeholder="AI nasıl bir üslup/yaklaşım sergilesin? (Örn: 'Sadece Ayet ve Hadis kaynaklarıyla cevapla')" oninput="saveStylePreferences()">
+                    </div>
                 </div>
 
                 <div class="chat-messages" id="chatMessages">
@@ -552,14 +567,14 @@
         </div>
     </div>
 
-    <!-- ALT MESAJ GİRİŞ ALANI (Her iki modda da aktif) -->
+    <!-- ALT MESAJ GİRİŞ ALANI -->
     <div class="input-area">
         <input type="text" id="userInput" placeholder="Mesajınızı veya sorunuzu yazın..." onkeypress="handleKeyPress(event)">
         <button class="btn-send" onclick="handleSend()"><i class="fa-solid fa-paper-plane"></i></button>
     </div>
 </div>
 
-<!-- DETAYLI PROFİL AYARLARI MODAL -->
+<!-- PROFİL AYARLARI MODAL -->
 <div class="modal-panel" id="profileModal">
     <div class="modal-content">
         <div class="modal-header">
@@ -582,7 +597,7 @@
                     <option value="Diğer">Diğer (Elle Giriş)</option>
                 </select>
             </div>
-            <!-- Diğer seçeneği için özel giriş -->
+            <!-- Diğer seçeneği için özel ortam girişi -->
             <div class="form-group" id="customEnvGroup" style="display: none;">
                 <label>Ortamı Belirtin:</label>
                 <input type="text" id="customEnvInput" placeholder="Ortamınızı yazın...">
@@ -637,6 +652,7 @@
     document.addEventListener("DOMContentLoaded", () => {
         initTheme();
         loadProfile();
+        loadStylePreferences();
         updateCityDisplayAndTimes();
     });
 
@@ -666,7 +682,7 @@
         document.getElementById('chatView').classList.toggle('active', mode === 'chat');
     }
 
-    // --- ALADHAN NAMAZ VAKİTLERİ API (Şehir Üzerinden) ---
+    // --- ALADHAN NAMAZ VAKİTLERİ API ---
     async function fetchPrayerTimesByCity(cityName) {
         try {
             document.getElementById('prayerDateText').innerText = "Yükleniyor...";
@@ -723,6 +739,27 @@
         sendToGemini(promptText);
     }
 
+    // --- YAKLAŞIM STİLİ & DİĞER KONTROLÜ ---
+    function handleStyleChange() {
+        const styleSelect = document.getElementById('responseStyle');
+        const customGroup = document.getElementById('customStyleGroup');
+        customGroup.style.display = styleSelect.value === 'diger' ? 'block' : 'none';
+        saveStylePreferences();
+    }
+
+    function saveStylePreferences() {
+        localStorage.setItem('responseStyle', document.getElementById('responseStyle').value);
+        localStorage.setItem('customStyleInput', document.getElementById('customStyleInput').value);
+    }
+
+    function loadStylePreferences() {
+        const savedStyle = localStorage.getItem('responseStyle');
+        const savedCustomInput = localStorage.getItem('customStyleInput');
+        if (savedStyle) document.getElementById('responseStyle').value = savedStyle;
+        if (savedCustomInput) document.getElementById('customStyleInput').value = savedCustomInput;
+        handleStyleChange();
+    }
+
     // --- MESAJ & GEMINI ENTEGRASYONU ---
     function handleKeyPress(e) { if (e.key === 'Enter') handleSend(); }
 
@@ -748,18 +785,44 @@
         const age = document.getElementById('profAge').value;
         const health = document.getElementById('profHealth').value;
         const finance = document.getElementById('profFinance').value;
-        const style = document.getElementById('responseStyle').value;
+        
+        // Yaklaşım Stili Yönetimi
+        const styleSelect = document.getElementById('responseStyle').value;
+        const customStyleInput = document.getElementById('customStyleInput').value;
+        let styleInstruction = "";
+
+        switch(styleSelect) {
+            case 'soru_cevap':
+                styleInstruction = "YAKLAŞIM TARZI: Kullanıcının sorusuna doğrudan Hz. Muhammed (S.A.V.)'in usulü, üslubu, Hadis-i Şerifleri ve öğretileriyle nasıl yanıt verileceğini açıklayarak cevap ver.";
+                break;
+            case 'yerimde_olsa':
+                styleInstruction = "YAKLAŞIM TARZI: Kullanıcının içinde bulunduğu durumu/ruh halini dikkate al. Hz. Muhammed (S.A.V.) benzer bir durumla karşılaşsa nasıl davranırdı, nasıl bir tutum sergilerdi, bunu rehber alarak yol göster.";
+                break;
+            case 'bunun_yerine':
+                styleInstruction = "YAKLAŞIM TARZI: Kullanıcının bahsettiği eyleme/düşünceye odaklan. Bu eylemin yerine Sünnet-i Seniyye'ye en uygun, daha bereketli ve doğru alternatif davranışı/ameli öner.";
+                break;
+            case 'diger':
+                styleInstruction = customStyleInput.trim() !== '' 
+                    ? `YAKLAŞIM TARZI (Özel Kullanıcı Yönlendirmesi): ${customStyleInput}` 
+                    : "YAKLAŞIM TARZI: Samimi, yapıcı ve manevi bir dost dili kullan.";
+                break;
+            default:
+                styleInstruction = "YAKLAŞIM TARZI: Samimi, içten ve manevi bir dost diliyle sohbet et.";
+        }
 
         const now = new Date();
         const timeStr = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
 
         const systemPrompt = `[SİSTEM REHBERİ:
 Kullanıcı Şehir: ${city}, Ortam:${env}, Cinsiyet: ${gender}, Yaş Grubu: ${age}, Sağlık Durumu: ${health}, Maddi Durum:${finance}.
-Anlık Saat: ${timeStr}.${cachedPrayerTimesText}
-Cevap Yaklaşım Modu: ${style}.
-GÖREV: Kullanıcıya samimi, Kur'an ve Sünnet ışığında, seçilen yaklaşım tarzına sadık kalarak yol göster. Türkçe cevap ver.]`;
+Anlık Saat: ${timeStr}. ${cachedPrayerTimesText}${styleInstruction}
+GÖREV: Kullanıcıya samimi, Kur'an ve Sünnet ışığında, belirtilen YAKLAŞIM TARZINA sadık kalarak yol göster. Türkçe cevap ver.]`;
 
-        chatHistory.push({ role: "user", parts: [{ text: `${systemPrompt}\n\nKullanıcı Mesajı: ${userText}` }] });
+        // İstek gönderirken sohbet geçmişini temiz bir formatta tutuyoruz
+        const requestContents = [
+            ...chatHistory,
+            { role: "user", parts: [{ text: `${systemPrompt}\n\nKullanıcı Mesajı: ${userText}` }] }
+        ];
 
         showLoading();
 
@@ -767,14 +830,17 @@ GÖREV: Kullanıcıya samimi, Kur'an ve Sünnet ışığında, seçilen yaklaş�
             const res = await fetch('/api/gemini', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ contents: chatHistory })
+                body: JSON.stringify({ contents: requestContents })
             });
             const data = await res.json();
             removeLoading();
 
             if (data.candidates && data.candidates[0].content.parts[0].text) {
                 const reply = data.candidates[0].content.parts[0].text;
+                // Sohbet geçmişine temiz kullanıcı mesajını ve model cevabını kaydediyoruz
+                chatHistory.push({ role: "user", parts: [{ text: userText }] });
                 chatHistory.push({ role: "model", parts: [{ text: reply }] });
+                
                 appendMessage(reply, 'bot-message');
                 speakText(reply);
             } else {
@@ -816,10 +882,16 @@ GÖREV: Kullanıcıya samimi, Kur'an ve Sünnet ışığında, seçilen yaklaş�
         const btn = document.getElementById('voiceBtn');
         btn.classList.toggle('active', isVoiceActive);
         btn.innerHTML = isVoiceActive ? '<i class="fa-solid fa-volume-high"></i>' : '<i class="fa-solid fa-volume-xmark"></i>';
+        
+        if (!isVoiceActive && window.speechSynthesis) {
+            window.speechSynthesis.cancel();
+        }
     }
 
     function speakText(text) {
         if (!isVoiceActive || !window.speechSynthesis) return;
+        window.speechSynthesis.cancel(); // Önceki seslendirmeyi durdur
+        
         const clean = text.replace(/[*_#`]/g, '');
         const utter = new SpeechSynthesisUtterance(clean);
         utter.lang = 'tr-TR';
@@ -843,7 +915,7 @@ GÖREV: Kullanıcıya samimi, Kur'an ve Sünnet ışığında, seçilen yaklaş�
         });
         
         closeProfileModal();
-        updateCityDisplayAndTimes(); // Şehir güncellendiyse namaz vakitlerini ve üst paneli yenile
+        updateCityDisplayAndTimes();
     }
 
     function loadProfile() {
@@ -855,12 +927,11 @@ GÖREV: Kullanıcıya samimi, Kur'an ve Sünnet ışığında, seçilen yaklaş�
             }
         });
         
-        // Eğer konum profilde yoksa mevcut bağlamdan veya varsayılan Kırıkkale ayarlansın
         if(!localStorage.getItem('profCity')) {
             document.getElementById('profCity').value = 'Kırıkkale';
         }
         
-        handleEnvChange(); // "Diğer" seçiliyse giriş kutusunu göster
+        handleEnvChange();
     }
 </script>
 
