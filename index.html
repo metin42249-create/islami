@@ -5,13 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>İslâmî Zeka - Manevi Yoldaş & Yönlendirme Rehberi</title>
     
-    <!-- FontAwesome & Leaflet CSS -->
+    <!-- FontAwesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-
-    <!-- Marked.js & Leaflet JS -->
+    <!-- Marked.js -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <style>
         :root {
@@ -185,16 +182,9 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            font-weight: 600;
+            color: var(--primary-light);
         }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: #e53e3e;
-        }
-
-        .status-dot.active { background-color: #38a169; }
 
         .btn-small {
             background: var(--primary-light);
@@ -204,6 +194,9 @@
             border-radius: 6px;
             font-size: 0.8rem;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         /* NAMAZ VAKİTLERİ BARI */
@@ -214,7 +207,7 @@
             padding: 12px 14px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 12px;
         }
 
         .prayer-title {
@@ -235,13 +228,13 @@
 
         .prayer-item {
             background: var(--bot-msg);
-            padding: 6px 4px;
+            padding: 8px 4px;
             border-radius: 8px;
             border: 1px solid var(--border-color);
         }
 
         .prayer-name { font-size: 0.7rem; opacity: 0.8; font-weight: 600; }
-        .prayer-time { font-size: 0.82rem; font-weight: 700; color: var(--primary-light); margin-top: 2px; }
+        .prayer-time { font-size: 0.82rem; font-weight: 700; color: var(--primary-light); margin-top: 4px; }
 
         .cards-grid {
             display: grid;
@@ -283,31 +276,6 @@
 
         .guide-card h3 { font-size: 0.95rem; font-weight: 600; }
         .guide-card p { font-size: 0.78rem; opacity: 0.8; }
-
-        /* CANLI HARİTA ALANI (SABİT YÜKSEKLİK İLE DÜZELTİLDİ) */
-        .map-section {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-
-        .map-section-title {
-            font-size: 0.88rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        #guidanceMap {
-            width: 100%;
-            height: 280px; /* Flex yükseklik çökmesini önlemek için net yükseklik verilmiştir */
-            min-height: 280px;
-            border-radius: var(--radius);
-            border: 1px solid var(--border-color);
-            z-index: 1;
-        }
 
         /* 2. SOHBET MODU TASARIMI */
         .chat-container {
@@ -353,6 +321,10 @@
             line-height: 1.5;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
+        
+        .message p { margin: 0 0 8px 0; }
+        .message p:last-child { margin-bottom: 0; }
+        .message ul, .message ol { margin: 6px 0; padding-left: 20px; }
 
         .user-message {
             align-self: flex-end;
@@ -383,13 +355,14 @@
             background: var(--card-bg);
             border-radius: var(--radius);
             width: 100%;
-            max-width: 500px;
+            max-width: 600px;
             padding: 20px;
             display: flex;
             flex-direction: column;
             gap: 14px;
-            max-height: 85vh;
+            max-height: 90vh;
             overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
 
         .modal-header {
@@ -399,22 +372,30 @@
             font-weight: 600;
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 10px;
+            color: var(--primary-light);
+            font-size: 1.1rem;
         }
 
         .form-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
         }
 
-        .form-group { display: flex; flex-direction: column; gap: 4px; }
-        .form-group label { font-size: 0.75rem; font-weight: 600; opacity: 0.8; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group label { font-size: 0.8rem; font-weight: 600; opacity: 0.9; text-transform: uppercase; letter-spacing: 0.5px;}
         .form-group input, .form-group select {
-            padding: 8px 10px;
-            border-radius: 6px;
+            padding: 10px 12px;
+            border-radius: 8px;
             border: 1px solid var(--border-color);
-            background: var(--card-bg);
+            background: var(--bg-color);
             color: var(--text-color);
+            outline: none;
+            font-size: 0.95rem;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--primary-light);
         }
 
         /* GİRDİ ALANI */
@@ -448,7 +429,8 @@
             font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 6px;
+            justify-content: center;
+            gap: 8px;
             transition: var(--transition);
         }
 
@@ -465,6 +447,9 @@
         .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
 
         @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
     </style>
 </head>
 <body>
@@ -491,22 +476,21 @@
     </header>
 
     <div class="content-area">
-        <!-- 1. YÖNLENDİRME MODU (Görsel Kartlar + Namaz Vakitleri + Canlı Harita) -->
+        <!-- 1. YÖNLENDİRME MODU -->
         <div class="view-panel active" id="guidanceView">
             <div class="guidance-container">
-                <!-- Konum Durum Çubuğu -->
+                <!-- Şehir Durum Çubuğu (Konum Yerine) -->
                 <div class="location-status-bar">
                     <div class="location-info">
-                        <span class="status-dot" id="locDot"></span>
-                        <span id="locStatusText">Konum aranıyor...</span>
+                        <i class="fa-solid fa-city"></i> Seçili Şehir: <span id="locStatusText">Kırıkkale</span>
                     </div>
-                    <button class="btn-small" onclick="requestLocation()"><i class="fa-solid fa-location-crosshairs"></i> Konumu Yenile</button>
+                    <button class="btn-small" onclick="openProfileModal()"><i class="fa-solid fa-pen"></i> Şehri Değiştir</button>
                 </div>
 
                 <!-- Güncel Namaz Vakitleri Paneli -->
                 <div class="prayer-times-bar">
                     <div class="prayer-title">
-                        <span><i class="fa-solid fa-clock"></i> Günlük Namaz Vakitleri (Diyanet)</span>
+                        <span><i class="fa-solid fa-clock"></i> Namaz Vakitleri (Diyanet)</span>
                         <small id="prayerDateText">Yükleniyor...</small>
                     </div>
                     <div class="prayer-grid">
@@ -523,30 +507,24 @@
                 <div class="cards-grid">
                     <div class="guide-card" onclick="triggerGuidance('namaz')">
                         <div class="card-icon"><i class="fa-solid fa-mosque"></i></div>
-                        <h3>Cami & Namaz</h3>
-                        <p>En yakın cami & ibadet sünnetleri</p>
+                        <h3>İbadet & Namaz</h3>
+                        <p>Vaktin ehemmiyeti ve ibadet sünnetleri</p>
                     </div>
                     <div class="guide-card" onclick="triggerGuidance('yemek')">
                         <div class="card-icon"><i class="fa-solid fa-utensils"></i></div>
-                        <h3>Helal Yemek</h3>
-                        <p>Restoranlar & sofra adabı</p>
+                        <h3>Yeme İçme</h3>
+                        <p>Sofra adabı ve bereket sünnetleri</p>
                     </div>
                     <div class="guide-card" onclick="triggerGuidance('ihtiyac')">
                         <div class="card-icon"><i class="fa-solid fa-restroom"></i></div>
-                        <h3>İhtiyaç Molası</h3>
-                        <p>Lavabolar & temizlik sünnetleri</p>
+                        <h3>Temizlik & Hijyen</h3>
+                        <p>Temizlik adabı ve sünnetleri</p>
                     </div>
                     <div class="guide-card" onclick="triggerGuidance('danismanlik')">
                         <div class="card-icon"><i class="fa-solid fa-hand-holding-heart"></i></div>
                         <h3>Manevi Danışman</h3>
                         <p>Anlık ruh haline özel tavsiye</p>
                     </div>
-                </div>
-
-                <!-- Canlı Harita Görünümü -->
-                <div class="map-section">
-                    <div class="map-section-title"><i class="fa-solid fa-map-location-dot"></i> Canlı Konum ve Harita Rehberi</div>
-                    <div id="guidanceMap"></div>
                 </div>
             </div>
         </div>
@@ -576,60 +554,81 @@
 
     <!-- ALT MESAJ GİRİŞ ALANI (Her iki modda da aktif) -->
     <div class="input-area">
-        <input type="text" id="userInput" placeholder="Yönlendirme veya soru yazın..." onkeypress="handleKeyPress(event)">
+        <input type="text" id="userInput" placeholder="Mesajınızı veya sorunuzu yazın..." onkeypress="handleKeyPress(event)">
         <button class="btn-send" onclick="handleSend()"><i class="fa-solid fa-paper-plane"></i></button>
     </div>
 </div>
 
-<!-- PROFİL AYARLARI MODAL -->
+<!-- DETAYLI PROFİL AYARLARI MODAL -->
 <div class="modal-panel" id="profileModal">
     <div class="modal-content">
         <div class="modal-header">
-            <span>Kişisel Profil & Konum Ayarları</span>
-            <span style="cursor:pointer;" onclick="closeProfileModal()"><i class="fa-solid fa-xmark"></i></span>
+            <span><i class="fa-solid fa-address-card"></i> Kişisel Profil Bilgileri</span>
+            <span style="cursor:pointer; padding:5px;" onclick="closeProfileModal()"><i class="fa-solid fa-xmark"></i></span>
         </div>
         <div class="form-grid">
             <div class="form-group">
-                <label>Varsayılan Şehir:</label>
-                <input type="text" id="profCity" value="İstanbul">
+                <label>Şehir (Namaz Vakitleri İçin):</label>
+                <input type="text" id="profCity" value="Kırıkkale" placeholder="Örn: Ankara">
             </div>
             <div class="form-group">
-                <label>Ortam:</label>
-                <select id="profEnv">
+                <label>Bulunduğunuz Ortam:</label>
+                <select id="profEnv" onchange="handleEnvChange()">
                     <option value="Ev">Ev</option>
                     <option value="İş Yeri / Ofis">İş Yeri / Ofis</option>
                     <option value="Okul / Üniversite">Okul / Üniversite</option>
                     <option value="Yolculuk / Yolda">Yolculuk / Yolda</option>
-                    <option value="Dışarıda / Sosyal">Dışarıda / Sosyal</option>
+                    <option value="Dışarıda / Sosyal Ortam">Dışarıda / Sosyal Ortam</option>
+                    <option value="Diğer">Diğer (Elle Giriş)</option>
                 </select>
+            </div>
+            <!-- Diğer seçeneği için özel giriş -->
+            <div class="form-group" id="customEnvGroup" style="display: none;">
+                <label>Ortamı Belirtin:</label>
+                <input type="text" id="customEnvInput" placeholder="Ortamınızı yazın...">
             </div>
             <div class="form-group">
                 <label>Cinsiyet:</label>
                 <select id="profGender">
                     <option value="Erkek">Erkek</option>
                     <option value="Kadın">Kadın</option>
+                    <option value="Belirtmek İstemiyorum">Belirtmek İstemiyorum</option>
                 </select>
             </div>
             <div class="form-group">
                 <label>Yaş Grubu:</label>
                 <select id="profAge">
-                    <option value="Genç (13-18)">Genç (13-18)</option>
-                    <option value="Yetişkin (19-64)" selected>Yetişkin (19-64)</option>
-                    <option value="Yaşlı (65+)">Yaşlı (65+)</option>
+                    <option value="Çocuk (7-12 yaş)">Çocuk (7-12 yaş)</option>
+                    <option value="Genç (13-18 yaş)">Genç (13-18 yaş)</option>
+                    <option value="Yetişkin (19-64 yaş)" selected>Yetişkin (19-64 yaş)</option>
+                    <option value="Yaşlı (65+ yaş)">Yaşlı (65+ yaş)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Sağlık Durumu:</label>
+                <select id="profHealth">
+                    <option value="Sağlıklı" selected>Sağlıklı / Sıhhatli</option>
+                    <option value="Hasta / Yorgun">Hasta / Rahatsız / Yorgun</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Maddi Durum:</label>
+                <select id="profFinance">
+                    <option value="Orta Hal / Normal" selected>Orta Hal / Normal</option>
+                    <option value="Dar Gelirli">Dar Gelirli</option>
+                    <option value="Varlıklı">Varlıklı</option>
                 </select>
             </div>
         </div>
-        <button class="btn-send" style="justify-content:center; padding:10px;" onclick="saveProfile()"><i class="fa-solid fa-floppy-disk"></i> Kaydet</button>
+        <button class="btn-send" style="padding:12px; margin-top:10px;" onclick="saveProfile()">
+            <i class="fa-solid fa-floppy-disk"></i> Ayarları Kaydet
+        </button>
     </div>
 </div>
 
 <script>
     // --- DURUM YÖNETİMİ ---
     let currentMode = 'guidance';
-    let userLat = null;
-    let userLng = null;
-    let map = null;
-    let markers = [];
     let chatHistory = [];
     let isVoiceActive = false;
     let cachedPrayerTimesText = "";
@@ -637,12 +636,11 @@
     // --- BAŞLANGIÇ YÜKLEMELERİ ---
     document.addEventListener("DOMContentLoaded", () => {
         initTheme();
-        initMap();
         loadProfile();
-        requestLocation();
+        updateCityDisplayAndTimes();
     });
 
-    // --- TEMA VE SİSTEM İLKLENDİRME ---
+    // --- TEMA İŞLEMLERİ ---
     function initTheme() {
         const savedTheme = localStorage.getItem('appTheme') || 'light';
         document.documentElement.setAttribute('data-theme', savedTheme);
@@ -666,93 +664,22 @@
         
         document.getElementById('guidanceView').classList.toggle('active', mode === 'guidance');
         document.getElementById('chatView').classList.toggle('active', mode === 'chat');
-
-        if (mode === 'guidance' && map) {
-            setTimeout(() => map.invalidateSize(), 200);
-        }
     }
 
-    // --- HARİTA VE GEOLOCATION İŞLEMLERİ ---
-    function initMap() {
-        const defaultLat = 39.92077; // Türkiye Genel Koordinat
-        const defaultLng = 32.85411;
-
-        map = L.map('guidanceMap').setView([defaultLat, defaultLng], 12);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap'
-        }).addTo(map);
-
-        setTimeout(() => map.invalidateSize(), 500);
-    }
-
-    function requestLocation() {
-        const dot = document.getElementById('locDot');
-        const statusText = document.getElementById('locStatusText');
-        statusText.innerText = "Konum alınıyor...";
-
-        if ("geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition(
-                async (pos) => {
-                    userLat = pos.coords.latitude;
-                    userLng = pos.coords.longitude;
-                    
-                    dot.classList.add('active');
-                    statusText.innerText = `Konum Tespit Edildi (${userLat.toFixed(2)},${userLng.toFixed(2)})`;
-                    
-                    if (map) {
-                        map.setView([userLat, userLng], 14);
-                        clearMarkers();
-                        const userMarker = L.marker([userLat, userLng]).addTo(map)
-                            .bindPopup("<b>Mevcut Konumunuz</b>").openPopup();
-                        markers.push(userMarker);
-                    }
-
-                    // Konum alındıktan sonra Aladhan API ile Namaz Vakitlerini Çek
-                    await fetchPrayerTimes(userLat, userLng);
-                },
-                async (err) => {
-                    dot.classList.remove('active');
-                    const city = document.getElementById('profCity').value || "İstanbul";
-                    statusText.innerText = `GPS alınamadı (${city} vakitleri kullanılacak).`;
-                    await fetchPrayerTimesByCity(city);
-                },
-                { timeout: 10000, enableHighAccuracy: true }
-            );
-        } else {
-            const city = document.getElementById('profCity').value || "İstanbul";
-            statusText.innerText = "Tarayıcı GPS desteklemiyor.";
-            fetchPrayerTimesByCity(city);
-        }
-    }
-
-    function clearMarkers() {
-        markers.forEach(m => map.removeLayer(m));
-        markers = [];
-    }
-
-    // --- ALADHAN NAMAZ VAKİTLERİ API ENTEGRASYONU (Method 13 = Diyanet İşleri) ---
-    async function fetchPrayerTimes(lat, lng) {
-        try {
-            const timestamp = Math.floor(Date.now() / 1000);
-            const res = await fetch(`https://api.aladhan.com/v1/timings/${timestamp}?latitude=${lat}&longitude=${lng}&method=13`);
-            const data = await res.json();
-            if (data.code === 200 && data.data) {
-                updatePrayerUI(data.data);
-            }
-        } catch (e) {
-            console.warn("Namaz vakti API hatası:", e);
-        }
-    }
-
+    // --- ALADHAN NAMAZ VAKİTLERİ API (Şehir Üzerinden) ---
     async function fetchPrayerTimesByCity(cityName) {
         try {
+            document.getElementById('prayerDateText').innerText = "Yükleniyor...";
             const res = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(cityName)}&country=Turkey&method=13`);
             const data = await res.json();
             if (data.code === 200 && data.data) {
                 updatePrayerUI(data.data);
+            } else {
+                document.getElementById('prayerDateText').innerText = "Vakitler alınamadı.";
             }
         } catch (e) {
             console.warn("Şehir ile namaz vakti çekilemedi:", e);
+            document.getElementById('prayerDateText').innerText = "Bağlantı hatası.";
         }
     }
 
@@ -772,38 +699,10 @@
         cachedPrayerTimesText = `Bugünün Namaz Vakitleri (Diyanet): İmsak: ${t.Fajr}, Güneş: ${t.Sunrise}, Öğle: ${t.Dhuhr}, İkindi: ${t.Asr}, Akşam: ${t.Maghrib}, Yatsı: ${t.Isha}`;
     }
 
-    // --- OVERPASS API İLE HARİTADA YER ARAMA ---
-    async function searchNearbyPlaces(type) {
-        if (!userLat || !userLng) {
-            alert("Haritada yakın yerleri aramak için konum izni gereklidir.");
-            return;
-        }
-
-        clearMarkers();
-        const userMarker = L.marker([userLat, userLng]).addTo(map).bindPopup("<b>Mevcut Konumunuz</b>");
-        markers.push(userMarker);
-
-        let query = "";
-        if (type === 'namaz') query = `node["amenity"="place_of_worship"]["religion"="muslim"](around:3000,${userLat},${userLng});out;`;
-        else if (type === 'yemek') query = `node["amenity"="restaurant"](around:2000,${userLat},${userLng});out;`;
-        else if (type === 'ihtiyac') query = `node["amenity"="toilets"](around:1500,${userLat},${userLng});out;`;
-
-        if (!query) return;
-
-        try {
-            const res = await fetch(`https://overpass-api.de/api/interpreter?data=[out:json];${query}`);
-            const data = await res.json();
-
-            if (data.elements && data.elements.length > 0) {
-                data.elements.forEach(place => {
-                    const name = place.tags.name || (type === 'namaz' ? 'Cami / Mescid' : 'Sosyal Nokta');
-                    const m = L.marker([place.lat, place.lon]).addTo(map).bindPopup(`<b>${name}</b>`);
-                    markers.push(m);
-                });
-            }
-        } catch (e) {
-            console.warn("Overpass API harita verisi alınamadı:", e);
-        }
+    function updateCityDisplayAndTimes() {
+        const city = document.getElementById('profCity').value || "Kırıkkale";
+        document.getElementById('locStatusText').innerText = city;
+        fetchPrayerTimesByCity(city);
     }
 
     // --- YÖNLENDİRME KART TETİKLEYİCİSİ ---
@@ -811,13 +710,10 @@
         let promptText = "";
 
         if (actionType === 'namaz') {
-            searchNearbyPlaces('namaz');
-            promptText = `Bulunduğum konumda namaza hazırlanıyorum. ${cachedPrayerTimesText}. Vaktin ehemmiyeti, sıradaki vakit ve namaz adabı ile ilgili kısa manevi bir rehberlik sunar mısın?`;
+            promptText = `Bulunduğum şehirde namaza hazırlanıyorum. ${cachedPrayerTimesText}. Vaktin ehemmiyeti, sıradaki vakit ve namaz adabı ile ilgili kısa manevi bir rehberlik sunar mısın?`;
         } else if (actionType === 'yemek') {
-            searchNearbyPlaces('yemek');
             promptText = "Şu an yemek yiyeceğim. Sofra adabı, yemeğe başlama ve bitirme sünnetleri hakkında ne tavsiye edersin?";
         } else if (actionType === 'ihtiyac') {
-            searchNearbyPlaces('ihtiyac');
             promptText = "İhtiyaç molasındayım. Temizlik ve hijyen hususundaki sünnetleri ve adabı hatırlatır mısın?";
         } else if (actionType === 'danismanlik') {
             promptText = "Gönlümü ve zihnimi ferahlatacak anlık manevi bir tavsiyeye ihtiyacım var.";
@@ -844,18 +740,22 @@
         appendMessage(userText, 'user-message');
 
         const city = document.getElementById('profCity').value;
-        const env = document.getElementById('profEnv').value;
+        const envSelect = document.getElementById('profEnv').value;
+        const customEnv = document.getElementById('customEnvInput').value;
+        const env = (envSelect === 'Diğer' && customEnv.trim() !== '') ? customEnv : envSelect;
+        
         const gender = document.getElementById('profGender').value;
         const age = document.getElementById('profAge').value;
+        const health = document.getElementById('profHealth').value;
+        const finance = document.getElementById('profFinance').value;
         const style = document.getElementById('responseStyle').value;
 
         const now = new Date();
         const timeStr = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
 
         const systemPrompt = `[SİSTEM REHBERİ:
-Kullanıcı Şehir: ${city}, Ortam:${env}, Cinsiyet: ${gender}, Yaş: ${age}.
-Anlık Saat: ${timeStr}. Konum Koordinatı: ${userLat ? userLat+','+userLng : 'Bilinmiyor'}.
-${cachedPrayerTimesText}
+Kullanıcı Şehir: ${city}, Ortam:${env}, Cinsiyet: ${gender}, Yaş Grubu: ${age}, Sağlık Durumu: ${health}, Maddi Durum:${finance}.
+Anlık Saat: ${timeStr}.${cachedPrayerTimesText}
 Cevap Yaklaşım Modu: ${style}.
 GÖREV: Kullanıcıya samimi, Kur'an ve Sünnet ışığında, seçilen yaklaşım tarzına sadık kalarak yol göster. Türkçe cevap ver.]`;
 
@@ -926,28 +826,41 @@ GÖREV: Kullanıcıya samimi, Kur'an ve Sünnet ışığında, seçilen yaklaş�
         window.speechSynthesis.speak(utter);
     }
 
+    function handleEnvChange() {
+        const envSelect = document.getElementById("profEnv");
+        const customEnvGroup = document.getElementById("customEnvGroup");
+        customEnvGroup.style.display = envSelect.value === "Diğer" ? "flex" : "none";
+    }
+
     function openProfileModal() { document.getElementById('profileModal').style.display = 'flex'; }
     function closeProfileModal() { document.getElementById('profileModal').style.display = 'none'; }
 
     function saveProfile() {
-        const city = document.getElementById('profCity').value;
-        localStorage.setItem('profCity', city);
-        localStorage.setItem('profEnv', document.getElementById('profEnv').value);
-        localStorage.setItem('profGender', document.getElementById('profGender').value);
-        localStorage.setItem('profAge', document.getElementById('profAge').value);
+        const fields = ['profCity', 'profEnv', 'customEnvInput', 'profGender', 'profAge', 'profHealth', 'profFinance'];
+        fields.forEach(field => {
+            const el = document.getElementById(field);
+            if(el) localStorage.setItem(field, el.value);
+        });
+        
         closeProfileModal();
-
-        // Şehir değiştiyse namaz vakitlerini güncelle
-        if (!userLat || !userLng) {
-            fetchPrayerTimesByCity(city);
-        }
+        updateCityDisplayAndTimes(); // Şehir güncellendiyse namaz vakitlerini ve üst paneli yenile
     }
 
     function loadProfile() {
-        if (localStorage.getItem('profCity')) document.getElementById('profCity').value = localStorage.getItem('profCity');
-        if (localStorage.getItem('profEnv')) document.getElementById('profEnv').value = localStorage.getItem('profEnv');
-        if (localStorage.getItem('profGender')) document.getElementById('profGender').value = localStorage.getItem('profGender');
-        if (localStorage.getItem('profAge')) document.getElementById('profAge').value = localStorage.getItem('profAge');
+        const fields = ['profCity', 'profEnv', 'customEnvInput', 'profGender', 'profAge', 'profHealth', 'profFinance'];
+        fields.forEach(field => {
+            const savedVal = localStorage.getItem(field);
+            if(savedVal !== null && document.getElementById(field)) {
+                document.getElementById(field).value = savedVal;
+            }
+        });
+        
+        // Eğer konum profilde yoksa mevcut bağlamdan veya varsayılan Kırıkkale ayarlansın
+        if(!localStorage.getItem('profCity')) {
+            document.getElementById('profCity').value = 'Kırıkkale';
+        }
+        
+        handleEnvChange(); // "Diğer" seçiliyse giriş kutusunu göster
     }
 </script>
 
