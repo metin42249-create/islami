@@ -3,15 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Manevi Yoldaş & Sünnet Rehberi</title>
+    <title>İslâmî Zeka - Manevi Yoldaş & Sünnet Rehberi</title>
+    
+    <!-- CSS Kütüphaneleri -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+    <!-- JS Kütüphaneleri -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <style>
         :root {
             --bg-color: #f0f4f1;
             --chat-bg: #ffffff;
             --primary: #1b4332;
             --primary-light: #2d6a4f;
+            --accent: #d4af37;
             --user-msg: #e8f5e9;
             --user-msg-border: #c8e6c9;
             --bot-msg: #f8f9fa;
@@ -34,6 +42,7 @@
             --chat-bg: #1e1e1e;
             --primary: #0d2818;
             --primary-light: #2d6a4f;
+            --accent: #ffd166;
             --user-msg: #1b3a2b;
             --user-msg-border: #2d6a4f;
             --bot-msg: #2d2d2d;
@@ -114,10 +123,8 @@
             transition: var(--transition);
         }
 
-        .icon-btn:hover {
-            opacity: 1;
-            transform: scale(1.1);
-        }
+        .icon-btn.active { color: var(--accent); opacity: 1; }
+        .icon-btn:hover { opacity: 1; transform: scale(1.1); }
 
         .info-panel {
             background-color: var(--info-bg);
@@ -162,10 +169,7 @@
             gap: 12px 16px;
         }
 
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
+        .form-group { display: flex; flex-direction: column; }
 
         label {
             font-size: 0.75rem;
@@ -207,10 +211,7 @@
             gap: 8px;
         }
 
-        .btn-save:hover {
-            background-color: var(--primary);
-            transform: translateY(-1px);
-        }
+        .btn-save:hover { background-color: var(--primary); transform: translateY(-1px); }
 
         .response-style-panel {
             background-color: var(--setup-bg);
@@ -276,6 +277,57 @@
             border: 1px solid var(--bot-msg-border);
             border-bottom-left-radius: 4px;
         }
+
+        /* Hızlı Eylem Butonları */
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            padding: 10px 24px;
+            background-color: var(--chat-bg);
+            border-top: 1px solid var(--setup-border);
+            overflow-x: auto;
+            scrollbar-width: none;
+            flex-shrink: 0;
+        }
+        
+        .quick-actions::-webkit-scrollbar { display: none; }
+
+        .action-chip {
+            background-color: var(--info-bg);
+            color: var(--info-text);
+            border: 1px solid var(--info-border);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .action-chip:hover {
+            background-color: var(--primary-light);
+            color: white;
+        }
+
+        /* Harita Alanı */
+        #mapContainer {
+            height: 0;
+            width: 100%;
+            transition: height 0.3s ease;
+            z-index: 1;
+            flex-shrink: 0;
+        }
+
+        #mapContainer.active {
+            height: 35vh;
+            border-top: 2px solid var(--primary-light);
+        }
+        
+        #map { width: 100%; height: 100%; }
 
         .input-area {
             padding: 16px 24px;
@@ -348,8 +400,11 @@
 
 <div class="container">
     <header>
-        <h1><img src="islami zeka-1.jpg" alt="İslâmî Zeka Logo" class="header-logo"> İslâmî Zeka - Manevi Yoldaş</h1>
+        <h1><i class="fa-solid fa-kaaba"></i> İslâmî Zeka - Manevi Yoldaş</h1>
         <div class="header-actions">
+            <button class="icon-btn" onclick="toggleVoice()" id="voiceBtn" title="Sesli Okumayı Aç/Kapat">
+                <i class="fa-solid fa-volume-xmark"></i>
+            </button>
             <button class="icon-btn" onclick="toggleTheme()" id="themeBtn" title="Temayı Değiştir">
                 <i class="fa-solid fa-sun"></i>
             </button>
@@ -365,10 +420,11 @@
         </div>
     </header>
 
+    <!-- Bilgi Paneli -->
     <div class="info-panel" id="infoPanel" style="display: none;">
         <h3><i class="fa-solid fa-seedling"></i> Bu Uygulama Nedir?</h3>
-        <p>O anki durumunuza özel Peygamberimizin (S.A.V.) sünnetini ve güzel ahlakını samimi bir yoldaş diliyle hatırlatan dijital bir rehberdir.</p>
-        <p><strong>Nasıl Başlanır?</strong> Aşağıdaki mesaj kutusuna şu an ne yaptığınızı (örneğin: <em>"İşe gidiyorum", "Canım sıkkın", "Dizi seyrediyorum"</em>) veya sorunuzu yazıp göndermeniz yeterlidir.</p>
+        <p>O anki durumunuza, konumunuza ve profilinize özel Peygamberimizin (S.A.V.) sünnetini ve güzel ahlakını samimi bir yoldaş diliyle hatırlatan dijital bir rehberdir.</p>
+        <p><strong>Nasıl Başlanır?</strong> Hızlı eylemleri kullanabilir veya mesaj kutusuna ne yaptığınızı, ne hissettiğinizi yazabilirsiniz.</p>
     </div>
 
     <!-- KOMPAKT AYARLAR PANELİ -->
@@ -449,12 +505,32 @@
         <input type="text" id="customResponseStyle" placeholder="Nasıl bir tarzda cevap istiyorsunuz?" style="display: none;">
     </div>
 
+    <!-- Sohbet Alanı -->
     <div class="chat-area" id="chatArea">
         <div class="message bot-message" id="welcomeMsg">
-            Selamun aleykum. Sağ üstteki <strong><i class="fa-solid fa-user-gear"></i> ayarlar (profil)</strong> ikonundan durumunuzu güncelleyebilir, hemen üst kısımdan ise <strong>cevap tarzını</strong> belirleyebilirsiniz. Sohbet etmek veya soru sormak için aşağıya yazın.
+            Selamun aleykum. Ben senin dijital Manevi Yoldaşınım. Kur'an ve Sünnet ışığında sana rehberlik etmek için buradayım. Anlık tavsiyeler ve harita yardımı alabilmek için lütfen tarayıcı <strong>konum iznine</strong> onay ver. Profil ayarlarına sağ üstteki çark ikonundan erişebilirsin.
         </div>
     </div>
 
+    <!-- Hızlı Eylem Çipleri -->
+    <div class="quick-actions">
+        <button class="action-chip" onclick="handleQuickAction('namaz')">
+            <i class="fa-solid fa-mosque"></i> Namaz Kılacağım (Yakın Cami)
+        </button>
+        <button class="action-chip" onclick="handleQuickAction('yemek')">
+            <i class="fa-solid fa-utensils"></i> Acıktım (Yakın Restoran)
+        </button>
+        <button class="action-chip" onclick="handleQuickAction('ihtiyac')">
+            <i class="fa-solid fa-restroom"></i> İhtiyaç Molası (Yakın WC)
+        </button>
+    </div>
+
+    <!-- Harita Alanı -->
+    <div id="mapContainer">
+        <div id="map"></div>
+    </div>
+
+    <!-- Mesaj Gönderme Alanı -->
     <div class="input-area">
         <input type="text" id="userInput" placeholder="Mesajınızı veya sorunuzu yazın..." onkeypress="handleKeyPress(event)">
         <button class="btn-send" id="sendBtn" onclick="sendMessage()">
@@ -465,8 +541,14 @@
 
 <script>
     let chatHistory = [];
+    let isVoiceEnabled = false;
+    let userLat = null;
+    let userLng = null;
+    let map = null;
+    let markers = [];
     const STORAGE_PREFIX = 'manevi_yoldas_';
 
+    // --- TEMA VE AYARLAR ---
     function initTheme() {
         const savedTheme = localStorage.getItem(STORAGE_PREFIX + 'theme');
         if (savedTheme) {
@@ -547,50 +629,158 @@
         }
     }
 
+    // --- SESLİ OKUMA (TTS) ---
+    function toggleVoice() {
+        isVoiceEnabled = !isVoiceEnabled;
+        const btn = document.getElementById('voiceBtn');
+        if (isVoiceEnabled) {
+            btn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+            btn.classList.add('active');
+            speakText("Sesli okuma aktifleştirildi.");
+        } else {
+            btn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
+            btn.classList.remove('active');
+            window.speechSynthesis.cancel();
+        }
+    }
+
+    function speakText(text) {
+        if (!isVoiceEnabled || !window.speechSynthesis) return;
+        
+        let cleanText = text.replace(/[*_#`]/g, '').replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
+        
+        const utterance = new SpeechSynthesisUtterance(cleanText);
+        utterance.lang = 'tr-TR';
+        utterance.rate = 1.0;
+        window.speechSynthesis.speak(utterance);
+    }
+
+    // --- KONUM VE HARİTA (OVERPASS API) ---
+    function getUserLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                pos => {
+                    userLat = pos.coords.latitude;
+                    userLng = pos.coords.longitude;
+                },
+                err => console.warn("Konum izni reddedildi veya alınamadı.")
+            );
+        }
+    }
+
+    function initMap(lat, lng) {
+        const container = document.getElementById('mapContainer');
+        container.classList.add('active');
+
+        if (!map) {
+            map = L.map('map').setView([lat, lng], 14);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap'
+            }).addTo(map);
+        } else {
+            map.setView([lat, lng], 14);
+            setTimeout(() => map.invalidateSize(), 300);
+        }
+
+        markers.forEach(m => map.removeLayer(m));
+        markers = [];
+
+        const userMarker = L.marker([lat, lng]).addTo(map).bindPopup("<b>Sizin Konumunuz</b>").openPopup();
+        markers.push(userMarker);
+    }
+
+    async function findNearbyPlaces(type) {
+        if (!userLat || !userLng) {
+            alert("Lütfen harita için tarayıcı konum iznini verin.");
+            return;
+        }
+
+        initMap(userLat, userLng);
+        
+        let query = "";
+        if (type === 'namaz') {
+            query = `node["amenity"="place_of_worship"]["religion"="muslim"](around:2500,${userLat},${userLng});out;`;
+        } else if (type === 'yemek') {
+            query = `node["amenity"="restaurant"](around:1500,${userLat},${userLng});out;`;
+        } else if (type === 'ihtiyac') {
+            query = `node["amenity"="toilets"](around:1000,${userLat},${userLng});out;`;
+        }
+
+        const url = `https://overpass-api.de/api/interpreter?data=[out:json];${query}`;
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            if (data.elements && data.elements.length > 0) {
+                data.elements.forEach(place => {
+                    let name = place.tags.name || "İsimsiz Yer";
+                    let marker = L.marker([place.lat, place.lon]).addTo(map).bindPopup(`<b>${name}</b>`);
+                    markers.push(marker);
+                });
+            } else {
+                appendMessage("Haritada bu çevrede kayıtlı uygun bir yer bulamadım, ancak yine de civardaki insanlara sorabilirsiniz.", "bot-message");
+            }
+        } catch (error) {
+            console.error("Harita verisi çekilemedi:", error);
+        }
+    }
+
+    // --- SOHBET VE GEMINI ENTEGRASYONU ---
     function resetChat() {
         if (confirm("Sohbet geçmişi temizlensin mi?")) {
             chatHistory = [];
-            document.getElementById("chatArea").innerHTML = `
-                <div class="message bot-message" id="welcomeMsg">
-                    Sohbet sıfırlandı. Aşağıya mesajınızı yazarak yeniden başlayabilirsiniz.
-                </div>`;
+            document.getElementById("chatArea").innerHTML = `<div class="message bot-message" id="welcomeMsg">Sohbet sıfırlandı. Aşağıya mesajınızı yazarak yeniden başlayabilirsiniz.</div>`;
+            document.getElementById('mapContainer').classList.remove('active');
         }
+    }
+
+    function handleQuickAction(type) {
+        let userMessage = "";
+        if (type === 'namaz') {
+            userMessage = "Şu an bulunduğum konumda namaz kılmak istiyorum. Bana namazın fazileti hakkında kısa bir hadis/sünnet paylaşarak moral ver. (Haritada yakındaki camiler işaretleniyor...)";
+        } else if (type === 'yemek') {
+            userMessage = "Acıktım ve yemek yiyeceğim. Yemeğe başlarken, yerken ve sonrasında dikkat etmem gereken sünnetleri kısa ve samimi bir dille hatırlatır mısın? (Haritada yakındaki restoranlar işaretleniyor...)";
+        } else if (type === 'ihtiyac') {
+            userMessage = "İhtiyaç molası vereceğim. Tuvalet adabı ile ilgili (örneğin hangi ayakla girilir, çıkılır, okunacak dua) sünnetleri kısaca hatırlatır mısın? (Haritada yakındaki lavabolar işaretleniyor...)";
+        }
+
+        document.getElementById("userInput").value = userMessage;
+        sendMessage();
+        findNearbyPlaces(type);
     }
 
     async function sendMessage() {
         const inputField = document.getElementById("userInput");
         const userText = inputField.value.trim();
-
         if (!userText) return;
 
         saveSettingsLocally();
         appendMessage(userText, "user-message");
         inputField.value = "";
 
-        // İNGİLİZCE MODEL YÖNERGELERİ (KULLANICI DİLİNE DİNAMİK UYARLAMA)
         const styleSelect = document.getElementById("responseStyle").value;
         const customStyle = document.getElementById("customResponseStyle").value.trim();
         
         let styleInstruction = "";
         if (styleSelect === "soru_cevap") {
-             styleInstruction = "Task: Speak from the perspective of someone who knows Prophet Muhammad (PBUH) very deeply (do not explicitly introduce yourself). Respond in the same language as the user's input using the framework: 'The Prophet (PBUH) would answer this question like this...'";
+             styleInstruction = "Task: Speak from the perspective of someone who knows Prophet Muhammad (PBUH) very deeply. Respond in the user's language using: 'The Prophet (PBUH) would answer this question like this...'";
         } else if (styleSelect === "yerimde_olsa") {
-             styleInstruction = "Task: Speak from the perspective of someone who knows Prophet Muhammad (PBUH) very deeply (do not explicitly introduce yourself). Respond in the same language as the user's input using the framework: 'If the Prophet (PBUH) were in your situation right now, he would...'";
+             styleInstruction = "Task: Speak from the perspective of someone who knows Prophet Muhammad (PBUH) very deeply. Respond in the user's language using: 'If the Prophet (PBUH) were in your situation right now, he would...'";
         } else if (styleSelect === "bunun_yerine") {
-             styleInstruction = "Task: Speak from the perspective of someone who knows Prophet Muhammad (PBUH) very deeply (do not explicitly introduce yourself). Offer a constructive alternative in the same language as the user's input using the framework: 'Instead of what you are doing right now, the Prophet (PBUH) would do...'";
+             styleInstruction = "Task: Speak from the perspective of someone who knows Prophet Muhammad (PBUH) very deeply. Offer a constructive alternative in the user's language using: 'Instead of what you are doing right now, the Prophet (PBUH) would do...'";
         } else if (styleSelect === "bu_saatte") {
-             styleInstruction = "Task: Speak from the perspective of someone who knows Prophet Muhammad (PBUH) very deeply (do not explicitly introduce yourself). Respond in the same language as the user's input referring to his daily routine: 'At this specific time of day, the Prophet (PBUH) usually occupied himself with...'";
+             styleInstruction = "Task: Speak from the perspective of someone who knows Prophet Muhammad (PBUH) very deeply. Respond referring to his routine: 'At this specific time of day, the Prophet (PBUH) usually occupied himself with...'";
         } else if (styleSelect === "diger" && customStyle !== "") {
-             styleInstruction = `Task: Speak from the perspective of someone who knows Prophet Muhammad (PBUH) very deeply (do not explicitly introduce yourself). Respond in the same language as the user's input adhering strictly to this user-defined style preference: '${customStyle}'.`;
+             styleInstruction = `Task: Respond adhering strictly to this style: '${customStyle}'.`;
         } else {
-             styleInstruction = "Task: Act as a warm, supportive spiritual companion who knows the Prophet (PBUH) deeply. Provide gentle guidance in the same language as the user's input and make the user feel genuinely supported.";
+             styleInstruction = "Task: Act as a warm, supportive spiritual companion who knows the Prophet (PBUH) deeply. Provide gentle guidance in the user's language.";
         }
 
         const systemNote = `\n\n[SYSTEM INSTRUCTION: ${styleInstruction}]`;
 
-        // İLK MESAJ: İNGİLİZCE SİSTEM İSTEMİ (DYNAMIC LANGUAGE MANDATE)
         if (chatHistory.length === 0) {
-            const city = document.getElementById("city").value.trim() || "Not specified";
+            const city = document.getElementById("city").value.trim() || "Belirtilmedi";
             const envSelect = document.getElementById("environment").value;
             const customEnv = document.getElementById("customEnvironment").value.trim();
             const environment = (envSelect === "Diğer" && customEnv !== "") ? customEnv : envSelect;
@@ -602,32 +792,34 @@
             const now = new Date();
             const timeString = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
             const dateString = now.toLocaleDateString('tr-TR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            let locationContext = userLat ? `Enlem: ${userLat}, Boylam: ${userLng}` : "Konum izni verilmedi.";
 
             const systemPrompt = `You are a sincere spiritual mentor who embodies the morality and manners of Prophet Muhammad (PBUH) and his companions.
-
 CRITICAL MANDATE: ALWAYS DETECT AND RESPOND IN THE EXACT SAME LANGUAGE USED BY THE USER IN THEIR MESSAGE.
 
-User Context & Profile:
+User Context, Profile & Location:
 - City: ${city}
 - Current Date / Day: ${dateString}
 - Local Time: ${timeString}
+- Exact Coordinates: ${locationContext}
 - Current Environment: ${environment}
 - Gender: ${gender}
 - Age Group: ${ageGroup}
 - Health Status: ${healthStatus}
 - Financial Status: ${financialStatus}
 
-Take the user's profile and current situation into consideration when framing your response.
+Take all these profile traits, the time, and location into consideration. Act as a sincere guide.
 User Action / Query: "${userText}"
 ${systemNote}`;
 
             chatHistory.push({ role: "user", parts: [{ text: systemPrompt }] });
-            
             const welcomeMsg = document.getElementById("welcomeMsg");
             if(welcomeMsg) welcomeMsg.style.display = 'none';
 
         } else {
-            chatHistory.push({ role: "user", parts: [{ text: userText + systemNote }] });
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+            chatHistory.push({ role: "user", parts: [{ text: userText + ` (Şu an saat: ${timeString})` + systemNote }] });
         }
 
         showLoadingIndicator();
@@ -650,10 +842,10 @@ ${systemNote}`;
             if (data.error) throw new Error(typeof data.error === 'string' ? data.error : (data.error.message || "Bir hata oluştu."));
 
             let botReply = data.candidates[0].content.parts[0].text;
-            
             chatHistory.push({ role: "model", parts: [{ text: botReply }] });
-
+            
             appendMessage(botReply, "bot-message");
+            speakText(botReply);
 
         } catch (error) {
             removeLoadingIndicator();
@@ -674,8 +866,8 @@ ${systemNote}`;
         const chatArea = document.getElementById("chatArea");
         const loadingDiv = document.createElement("div");
         loadingDiv.id = "loadingIndicator";
-        loadingDiv.className = "message bot-message";
-        loadingDiv.innerHTML = `<div class="typing-indicator"><span></span><span></span><span></span></div>`;
+        loadingDiv.className = "message bot-message typing-indicator";
+        loadingDiv.innerHTML = `<span></span><span></span><span></span>`;
         chatArea.appendChild(loadingDiv);
         chatArea.scrollTop = chatArea.scrollHeight;
     }
@@ -692,6 +884,7 @@ ${systemNote}`;
     document.addEventListener("DOMContentLoaded", () => {
         initTheme();
         loadSettings();
+        getUserLocation();
     });
 </script>
 
