@@ -3,553 +3,834 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>İslâmî Zeka - Manevi Yoldaş & Sünnet Rehberi</title>
+    <title>İslâmî Zeka - Manevi Yoldaş & Yönlendirme Rehberi</title>
     
-    <!-- CSS Kütüphaneleri -->
+    <!-- FontAwesome & Leaflet CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
-    <!-- JS Kütüphaneleri -->
+    <!-- Marked.js & Leaflet JS -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <style>
         :root {
-            --bg-color: #f0f4f1;
-            --chat-bg: #ffffff;
+            --bg-color: #f4f7f5;
+            --card-bg: #ffffff;
             --primary: #1b4332;
             --primary-light: #2d6a4f;
             --accent: #d4af37;
+            --text-color: #2d3748;
+            --border-color: #e2e8f0;
             --user-msg: #e8f5e9;
-            --user-msg-border: #c8e6c9;
             --bot-msg: #f8f9fa;
-            --bot-msg-border: #e9ecef;
-            --text-color: #2b2d42;
-            --info-bg: #eef5f1;
-            --info-border: #c8e6c9;
-            --info-text: #1b4332;
-            --setup-bg: #fdfdfd;
-            --setup-border: #e2e8f0;
-            --input-border: #cbd5e1;
-            --input-bg: #ffffff;
-            --shadow-color: rgba(0,0,0,0.06);
-            --scrollbar-thumb: #cbd5e1;
+            --shadow: 0 4px 15px rgba(0,0,0,0.05);
+            --radius: 14px;
             --transition: all 0.3s ease;
         }
 
         [data-theme="dark"] {
-            --bg-color: #121212;
-            --chat-bg: #1e1e1e;
+            --bg-color: #121815;
+            --card-bg: #1e2622;
             --primary: #0d2818;
             --primary-light: #2d6a4f;
             --accent: #ffd166;
-            --user-msg: #1b3a2b;
-            --user-msg-border: #2d6a4f;
-            --bot-msg: #2d2d2d;
-            --bot-msg-border: #3d3d3d;
             --text-color: #e2e8f0;
-            --info-bg: #1a2e22;
-            --info-border: #2d6a4f;
-            --info-text: #a3e635;
-            --setup-bg: #252525;
-            --setup-border: #333333;
-            --input-border: #475569;
-            --input-bg: #2a2a2a;
-            --shadow-color: rgba(0,0,0,0.4);
-            --scrollbar-thumb: #4a5568;
+            --border-color: #2d3748;
+            --user-msg: #1b3a2b;
+            --bot-msg: #28302c;
+            --shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
             height: 100vh;
             height: 100dvh;
+            display: flex;
+            justify-content: center;
             overflow: hidden;
-            transition: var(--transition);
         }
 
-        .container {
+        .app-container {
             width: 100%;
-            max-width: 850px;
-            background: var(--chat-bg);
+            max-width: 900px;
+            background: var(--card-bg);
             display: flex;
             flex-direction: column;
             height: 100%;
-            box-shadow: 0 10px 40px var(--shadow-color);
-            transition: var(--transition);
+            box-shadow: var(--shadow);
+            position: relative;
         }
 
+        /* HEADER & MODE SWITCHER */
         header {
             background-color: var(--primary);
             color: white;
-            padding: 16px 24px;
+            padding: 12px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex-shrink: 0;
+            z-index: 10;
+        }
+
+        .header-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            z-index: 10;
-            flex-shrink: 0;
         }
 
-        header h1 {
-            margin: 0;
-            font-size: 1.2rem;
+        .header-top h1 {
+            font-size: 1.15rem;
             font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .header-actions {
             display: flex;
-            gap: 16px;
+            gap: 12px;
         }
 
         .icon-btn {
             background: none;
             border: none;
             color: white;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             cursor: pointer;
-            opacity: 0.8;
+            opacity: 0.85;
             transition: var(--transition);
         }
-
         .icon-btn.active { color: var(--accent); opacity: 1; }
         .icon-btn:hover { opacity: 1; transform: scale(1.1); }
 
-        .chat-area {
+        /* MOD SEÇİCİ TABLARI */
+        .mode-nav {
+            display: flex;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 4px;
+            border-radius: 10px;
+            gap: 4px;
+        }
+
+        .mode-tab {
             flex: 1;
-            padding: 24px;
+            padding: 8px 12px;
+            border: none;
+            background: transparent;
+            color: white;
+            font-size: 0.88rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            opacity: 0.7;
+        }
+
+        .mode-tab.active {
+            background: var(--primary-light);
+            opacity: 1;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        /* BÖLÜM ALANLARI */
+        .content-area {
+            flex: 1;
             overflow-y: auto;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .view-panel {
+            display: none;
+            height: 100%;
+            flex-direction: column;
+        }
+
+        .view-panel.active {
+            display: flex;
+        }
+
+        /* 1. YÖNLENDİRME MODU TASARIMI */
+        .guidance-container {
+            padding: 16px;
             display: flex;
             flex-direction: column;
             gap: 16px;
-            scroll-behavior: smooth;
+            overflow-y: auto;
         }
 
-        .message {
-            max-width: 85%;
-            padding: 14px 20px;
-            border-radius: 16px;
-            line-height: 1.6;
-            font-size: 0.98rem;
-            box-shadow: 0 2px 8px var(--shadow-color);
-        }
-
-        .message p { margin: 0 0 8px 0; }
-        .message p:last-child { margin-bottom: 0; }
-
-        .user-message {
-            align-self: flex-end;
-            background-color: var(--user-msg);
-            border: 1px solid var(--user-msg-border);
-            border-bottom-right-radius: 4px;
-        }
-
-        .bot-message {
-            align-self: flex-start;
+        .location-status-bar {
             background-color: var(--bot-msg);
-            border: 1px solid var(--bot-msg-border);
-            border-bottom-left-radius: 4px;
-        }
-
-        /* Hızlı Eylem Butonları */
-        .quick-actions {
+            border: 1px solid var(--border-color);
+            padding: 10px 14px;
+            border-radius: var(--radius);
             display: flex;
-            gap: 10px;
-            padding: 10px 24px;
-            background-color: var(--chat-bg);
-            border-top: 1px solid var(--setup-border);
-            overflow-x: auto;
-            scrollbar-width: none;
-            flex-shrink: 0;
-        }
-        
-        .quick-actions::-webkit-scrollbar { display: none; }
-
-        .action-chip {
-            background-color: var(--info-bg);
-            color: var(--info-text);
-            border: 1px solid var(--info-border);
-            padding: 8px 16px;
-            border-radius: 20px;
+            justify-content: space-between;
+            align-items: center;
             font-size: 0.85rem;
-            font-weight: 600;
+        }
+
+        .location-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #e53e3e;
+        }
+
+        .status-dot.active { background-color: #38a169; }
+
+        .btn-small {
+            background: var(--primary-light);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
             cursor: pointer;
-            white-space: nowrap;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+        }
+
+        .guide-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 10px;
+            cursor: pointer;
             transition: var(--transition);
+        }
+
+        .guide-card:hover {
+            border-color: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--user-msg);
+            color: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .guide-card h3 { font-size: 0.95rem; font-weight: 600; }
+        .guide-card p { font-size: 0.78rem; opacity: 0.8; }
+
+        /* CANLI HARİTA ALANI */
+        .map-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+            min-height: 250px;
+        }
+
+        .map-section-title {
+            font-size: 0.88rem;
+            font-weight: 600;
             display: flex;
             align-items: center;
             gap: 6px;
         }
 
-        .action-chip:hover {
-            background-color: var(--primary-light);
-            color: white;
+        #guidanceMap {
+            width: 100%;
+            height: 100%;
+            min-height: 220px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            z-index: 1;
         }
 
-        /* Harita Alanı */
-        #mapContainer {
-            height: 0;
-            width: 100%;
-            transition: height 0.3s ease;
-            z-index: 1;
+        /* 2. SOHBET MODU TASARIMI */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .response-style-bar {
+            background: var(--bot-msg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
             flex-shrink: 0;
         }
 
-        #mapContainer.active {
-            height: 35vh;
-            border-top: 2px solid var(--primary-light);
+        .response-style-bar select {
+            flex: 1;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-color);
         }
-        
-        #map { width: 100%; height: 100%; }
 
-        .input-area {
-            padding: 16px 24px;
-            border-top: 1px solid var(--setup-border);
+        .chat-messages {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
             display: flex;
+            flex-direction: column;
             gap: 12px;
-            background-color: var(--chat-bg);
+        }
+
+        .message {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            font-size: 0.92rem;
+            line-height: 1.5;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background-color: var(--user-msg);
+            border-bottom-right-radius: 2px;
+        }
+
+        .bot-message {
+            align-self: flex-start;
+            background-color: var(--bot-msg);
+            border: 1px solid var(--border-color);
+            border-bottom-left-radius: 2px;
+        }
+
+        /* PROFİL AYARLARI PANELİ */
+        .modal-panel {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
             align-items: center;
+            z-index: 100;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+        }
+
+        .form-group { display: flex; flex-direction: column; gap: 4px; }
+        .form-group label { font-size: 0.75rem; font-weight: 600; opacity: 0.8; }
+        .form-group input, .form-group select {
+            padding: 8px 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        /* GİRDİ ALANI */
+        .input-area {
+            padding: 12px 16px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 8px;
+            background: var(--card-bg);
             flex-shrink: 0;
         }
 
         .input-area input {
             flex: 1;
-            border-radius: 30px;
-            padding: 14px 20px;
-            background-color: var(--input-bg);
-            border: 1px solid var(--input-border);
-            font-size: 0.95rem;
+            padding: 12px 16px;
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            outline: none;
+            background: var(--bg-color);
+            color: var(--text-color);
+            font-size: 0.9rem;
         }
 
         .btn-send {
-            background-color: var(--primary-light);
+            background: var(--primary-light);
             color: white;
             border: none;
+            border-radius: 24px;
+            padding: 0 18px;
             cursor: pointer;
-            padding: 14px 24px;
-            border-radius: 30px;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
         }
 
+        .btn-send:hover { background: var(--primary); }
+
+        .typing-indicator {
+            display: flex; gap: 4px; align-items: center; padding: 6px 0;
+        }
         .typing-indicator span {
-            display: inline-block;
-            width: 8px; height: 8px;
-            background-color: var(--primary-light);
-            border-radius: 50%;
+            width: 6px; height: 6px; background: var(--primary-light); border-radius: 50%;
             animation: bounce 1.4s infinite ease-in-out both;
-            margin-right: 4px;
         }
         .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
         .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
 
-        @keyframes bounce {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1.0); }
-        }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div class="app-container">
     <header>
-        <h1><i class="fa-solid fa-kaaba"></i> Manevi Yoldaş</h1>
-        <div class="header-actions">
-            <button class="icon-btn" onclick="toggleVoice()" id="voiceBtn" title="Sesli Okumayı Aç/Kapat">
-                <i class="fa-solid fa-volume-xmark"></i>
+        <div class="header-top">
+            <h1><i class="fa-solid fa-kaaba"></i> İslâmî Zeka</h1>
+            <div class="header-actions">
+                <button class="icon-btn" onclick="toggleVoice()" id="voiceBtn" title="Sesli Okuma"><i class="fa-solid fa-volume-xmark"></i></button>
+                <button class="icon-btn" onclick="toggleTheme()" id="themeBtn" title="Tema"><i class="fa-solid fa-sun"></i></button>
+                <button class="icon-btn" onclick="openProfileModal()" title="Profil Ayarları"><i class="fa-solid fa-user-gear"></i></button>
+            </div>
+        </div>
+        <!-- MOD SEÇİCİ NAVİGASYON -->
+        <div class="mode-nav">
+            <button class="mode-tab active" id="tabGuidance" onclick="switchMode('guidance')">
+                <i class="fa-solid fa-compass"></i> Yönlendirme Modu
             </button>
-            <button class="icon-btn" onclick="toggleTheme()" id="themeBtn" title="Temayı Değiştir">
-                <i class="fa-solid fa-sun"></i>
-            </button>
-            <button class="icon-btn" onclick="resetChat()" title="Sohbeti Sıfırla">
-                <i class="fa-solid fa-rotate-right"></i>
+            <button class="mode-tab" id="tabChat" onclick="switchMode('chat')">
+                <i class="fa-solid fa-comments"></i> Sohbet Modu
             </button>
         </div>
     </header>
 
-    <div class="chat-area" id="chatArea">
-        <div class="message bot-message" id="welcomeMsg">
-            Selamun aleykum. Ben senin dijital Manevi Yoldaşınım. Kur'an ve Sünnet ışığında sana rehberlik etmek için buradayım. Anlık tavsiyeler ve harita yardımı alabilmek için lütfen tarayıcı <strong>konum iznine</strong> onay ver.
+    <div class="content-area">
+        <!-- 1. YÖNLENDİRME MODU (Görsel Kartlar + Canlı Harita) -->
+        <div class="view-panel active" id="guidanceView">
+            <div class="guidance-container">
+                <!-- Konum Durum Çubuğu -->
+                <div class="location-status-bar">
+                    <div class="location-info">
+                        <span class="status-dot" id="locDot"></span>
+                        <span id="locStatusText">Konum aranıyor...</span>
+                    </div>
+                    <button class="btn-small" onclick="requestLocation()"><i class="fa-solid fa-location-crosshairs"></i> Konumu Yenile</button>
+                </div>
+
+                <!-- Hızlı Yönlendirme Kartları -->
+                <div class="cards-grid">
+                    <div class="guide-card" onclick="triggerGuidance('namaz')">
+                        <div class="card-icon"><i class="fa-solid fa-mosque"></i></div>
+                        <h3>Cami & Namaz</h3>
+                        <p>En yakın cami & ibadet sünnetleri</p>
+                    </div>
+                    <div class="guide-card" onclick="triggerGuidance('yemek')">
+                        <div class="card-icon"><i class="fa-solid fa-utensils"></i></div>
+                        <h3>Helal Yemek</h3>
+                        <p>Restoranlar & sofra adabı</p>
+                    </div>
+                    <div class="guide-card" onclick="triggerGuidance('ihtiyac')">
+                        <div class="card-icon"><i class="fa-solid fa-restroom"></i></div>
+                        <h3>İhtiyaç Molası</h3>
+                        <p>Lavabolar & temizlik sünnetleri</p>
+                    </div>
+                    <div class="guide-card" onclick="triggerGuidance('danismanlik')">
+                        <div class="card-icon"><i class="fa-solid fa-hand-holding-heart"></i></div>
+                        <h3>Manevi Danışman</h3>
+                        <p>Anlık ruh haline özel tavsiye</p>
+                    </div>
+                </div>
+
+                <!-- Canlı Harita Görünümü -->
+                <div class="map-section">
+                    <div class="map-section-title"><i class="fa-solid fa-map-location-dot"></i> Canlı Konum ve Harita Rehberi</div>
+                    <div id="guidanceMap"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. SOHBET MODU (Detaylı AI Diyaloğu) -->
+        <div class="view-panel" id="chatView">
+            <div class="chat-container">
+                <div class="response-style-bar">
+                    <i class="fa-solid fa-sliders"></i>
+                    <label for="responseStyle">Rehber Yaklaşımı:</label>
+                    <select id="responseStyle">
+                        <option value="standart">Sohbet & Yoldaşlık (Samimi)</option>
+                        <option value="soru_cevap">Peygamberimiz (S.A.V.) nasıl cevaplardı?</option>
+                        <option value="yerimde_olsa">Peygamberimiz benim yerimde olsa ne yapardı?</option>
+                        <option value="bunun_yerine">Şu an yaptığımın yerine O (S.A.V.) ne yapardı?</option>
+                    </select>
+                </div>
+
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message bot-message">
+                        Selamun aleykum. Yönlendirme Modu'ndan hızlı eylem seçebilir veya buradan serbestçe sorunuzu yazabilirsiniz.
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Hızlı Eylem Çipleri -->
-    <div class="quick-actions">
-        <button class="action-chip" onclick="handleQuickAction('namaz')">
-            <i class="fa-solid fa-mosque"></i> Namaz Kılacağım (Yakın Cami)
-        </button>
-        <button class="action-chip" onclick="handleQuickAction('yemek')">
-            <i class="fa-solid fa-utensils"></i> Acıktım (Yakın Restoran)
-        </button>
-        <button class="action-chip" onclick="handleQuickAction('ihtiyac')">
-            <i class="fa-solid fa-restroom"></i> İhtiyaç Molası (Yakın WC)
-        </button>
-    </div>
-
-    <!-- Harita Alanı -->
-    <div id="mapContainer">
-        <div id="map"></div>
-    </div>
-
+    <!-- ALT MESAJ GİRİŞ ALANI (Her iki modda da aktif) -->
     <div class="input-area">
-        <input type="text" id="userInput" placeholder="Mesajınızı veya sorunuzu yazın..." onkeypress="handleKeyPress(event)">
-        <button class="btn-send" id="sendBtn" onclick="sendMessage()">Gönder <i class="fa-solid fa-paper-plane"></i></button>
+        <input type="text" id="userInput" placeholder="Yönlendirme veya soru yazın..." onkeypress="handleKeyPress(event)">
+        <button class="btn-send" onclick="handleSend()"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>
+</div>
+
+<!-- PROFİL AYARLARI MODAL -->
+<div class="modal-panel" id="profileModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span>Kişisel Profil & Konum Ayarları</span>
+            <span style="cursor:pointer;" onclick="closeProfileModal()"><i class="fa-solid fa-xmark"></i></span>
+        </div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Varsayılan Şehir:</label>
+                <input type="text" id="profCity" value="İstanbul">
+            </div>
+            <div class="form-group">
+                <label>Ortam:</label>
+                <select id="profEnv">
+                    <option value="Ev">Ev</option>
+                    <option value="İş Yeri / Ofis">İş Yeri / Ofis</option>
+                    <option value="Okul / Üniversite">Okul / Üniversite</option>
+                    <option value="Yolculuk / Yolda">Yolculuk / Yolda</option>
+                    <option value="Dışarıda / Sosyal">Dışarıda / Sosyal</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Cinsiyet:</label>
+                <select id="profGender">
+                    <option value="Erkek">Erkek</option>
+                    <option value="Kadın">Kadın</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Yaş Grubu:</label>
+                <select id="profAge">
+                    <option value="Genç (13-18)">Genç (13-18)</option>
+                    <option value="Yetişkin (19-64)" selected>Yetişkin (19-64)</option>
+                    <option value="Yaşlı (65+)">Yaşlı (65+)</option>
+                </select>
+            </div>
+        </div>
+        <button class="btn-send" style="justify-content:center; padding:10px;" onclick="saveProfile()"><i class="fa-solid fa-floppy-disk"></i> Kaydet</button>
     </div>
 </div>
 
 <script>
-    let chatHistory = [];
-    let isVoiceEnabled = false;
+    // --- DURUM YÖNETİMİ ---
+    let currentMode = 'guidance'; // 'guidance' veya 'chat'
     let userLat = null;
     let userLng = null;
     let map = null;
     let markers = [];
+    let chatHistory = [];
+    let isVoiceActive = false;
 
-    // --- SESLİ OKUMA (TTS) ---
-    function toggleVoice() {
-        isVoiceEnabled = !isVoiceEnabled;
-        const btn = document.getElementById('voiceBtn');
-        if (isVoiceEnabled) {
-            btn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
-            btn.classList.add('active');
-            speakText("Sesli okuma aktifleştirildi.");
-        } else {
-            btn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
-            btn.classList.remove('active');
-            window.speechSynthesis.cancel();
+    // --- BAŞLANGIÇ YÜKLEMELERİ ---
+    document.addEventListener("DOMContentLoaded", () => {
+        initTheme();
+        initMap();
+        requestLocation();
+        loadProfile();
+    });
+
+    // --- MOD DEĞİŞTİRME (Yönlendirme vs Sohbet) ---
+    function switchMode(mode) {
+        currentMode = mode;
+        document.getElementById('tabGuidance').classList.toggle('active', mode === 'guidance');
+        document.getElementById('tabChat').classList.toggle('active', mode === 'chat');
+        
+        document.getElementById('guidanceView').classList.toggle('active', mode === 'guidance');
+        document.getElementById('chatView').classList.toggle('active', mode === 'chat');
+
+        if (mode === 'guidance' && map) {
+            setTimeout(() => map.invalidateSize(), 200);
         }
     }
 
-    function speakText(text) {
-        if (!isVoiceEnabled || !window.speechSynthesis) return;
-        
-        // Markdown ve emojileri temizle
-        let cleanText = text.replace(/[*_#`]/g, '').replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
-        
-        const utterance = new SpeechSynthesisUtterance(cleanText);
-        utterance.lang = 'tr-TR';
-        utterance.rate = 1.0;
-        window.speechSynthesis.speak(utterance);
+    // --- HARİTA VE GEOLOCATION İŞLEMLERİ ---
+    function initMap() {
+        // Varsayılan koordinat (Ankara/Türkiye ortalaması)
+        const defaultLat = 39.92077;
+        const defaultLng = 32.85411;
+
+        map = L.map('guidanceMap').setView([defaultLat, defaultLng], 12);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap'
+        }).addTo(map);
     }
 
-    // --- TEMA ---
-    function toggleTheme() {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', newTheme);
-        document.getElementById('themeBtn').innerHTML = newTheme === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
-    }
+    function requestLocation() {
+        const dot = document.getElementById('locDot');
+        const statusText = document.getElementById('locStatusText');
+        statusText.innerText = "Konum alınıyor...";
 
-    // --- KONUM ALMA ---
-    function getUserLocation() {
-        if (navigator.geolocation) {
+        if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(
-                pos => {
+                (pos) => {
                     userLat = pos.coords.latitude;
                     userLng = pos.coords.longitude;
+                    
+                    dot.classList.add('active');
+                    statusText.innerText = `Konum Tespit Edildi (${userLat.toFixed(2)},${userLng.toFixed(2)})`;
+                    
+                    if (map) {
+                        map.setView([userLat, userLng], 14);
+                        clearMarkers();
+                        const userMarker = L.marker([userLat, userLng]).addTo(map)
+                            .bindPopup("<b>Mevcut Konumunuz</b>").openPopup();
+                        markers.push(userMarker);
+                    }
                 },
-                err => console.warn("Konum izni reddedildi veya alınamadı.")
+                (err) => {
+                    dot.classList.remove('active');
+                    statusText.innerText = "Konum izni verilemedi (Şehir profili kullanılacak).";
+                },
+                { timeout: 10000, enableHighAccuracy: true }
             );
+        } else {
+            statusText.innerText = "Tarayıcı konum desteği sunmuyor.";
         }
     }
 
-    // --- HARİTA VE OVERPASS API (Yakındaki Yerleri Bulma) ---
-    function initMap(lat, lng) {
-        const container = document.getElementById('mapContainer');
-        container.classList.add('active');
-
-        if (!map) {
-            map = L.map('map').setView([lat, lng], 14);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap'
-            }).addTo(map);
-        } else {
-            map.setView([lat, lng], 14);
-            setTimeout(() => map.invalidateSize(), 300);
-        }
-
-        // Önceki işaretçileri temizle
+    function clearMarkers() {
         markers.forEach(m => map.removeLayer(m));
         markers = [];
-
-        // Kullanıcının kendi konumu
-        const userMarker = L.marker([lat, lng]).addTo(map).bindPopup("<b>Sizin Konumunuz</b>").openPopup();
-        markers.push(userMarker);
     }
 
-    async function findNearbyPlaces(type) {
+    // OVERPASS API İLE YAKIN YERLERİ ARAMA
+    async function searchNearbyPlaces(type) {
         if (!userLat || !userLng) {
-            alert("Lütfen harita için tarayıcı konum iznini verin.");
+            alert("Yakındaki yerleri haritada göstermek için konum izni gereklidir.");
             return;
         }
 
-        initMap(userLat, userLng);
-        
-        let query = "";
-        if (type === 'namaz') {
-            // Etraftaki Camileri bulur
-            query = `node["amenity"="place_of_worship"]["religion"="muslim"](around:2500,${userLat},${userLng});out;`;
-        } else if (type === 'yemek') {
-            // Etraftaki Restoranları bulur
-            query = `node["amenity"="restaurant"](around:1500,${userLat},${userLng});out;`;
-        } else if (type === 'ihtiyac') {
-            // Etraftaki Tuvaletleri bulur
-            query = `node["amenity"="toilets"](around:1000,${userLat},${userLng});out;`;
-        }
+        clearMarkers();
+        // Kullanıcı pinini ekle
+        const userMarker = L.marker([userLat, userLng]).addTo(map).bindPopup("<b>Mevcut Konumunuz</b>");
+        markers.push(userMarker);
 
-        const url = `https://overpass-api.de/api/interpreter?data=[out:json];${query}`;
+        let query = "";
+        if (type === 'namaz') query = `node["amenity"="place_of_worship"]["religion"="muslim"](around:3000,${userLat},${userLng});out;`;
+        else if (type === 'yemek') query = `node["amenity"="restaurant"](around:2000,${userLat},${userLng});out;`;
+        else if (type === 'ihtiyac') query = `node["amenity"="toilets"](around:1500,${userLat},${userLng});out;`;
+
+        if (!query) return;
 
         try {
-            const response = await fetch(url);
-            const data = await response.json();
-            
+            const res = await fetch(`https://overpass-api.de/api/interpreter?data=[out:json];${query}`);
+            const data = await res.json();
+
             if (data.elements && data.elements.length > 0) {
                 data.elements.forEach(place => {
-                    let name = place.tags.name || "İsimsiz Yer";
-                    let marker = L.marker([place.lat, place.lon]).addTo(map)
-                        .bindPopup(`<b>${name}</b>`);
-                    markers.push(marker);
+                    const name = place.tags.name || (type === 'namaz' ? 'Cami/Mescid' : 'Sosyal Tesis');
+                    const m = L.marker([place.lat, place.lon]).addTo(map).bindPopup(`<b>${name}</b>`);
+                    markers.push(m);
                 });
-            } else {
-                appendMessage("Haritada bu çevrede kayıtlı uygun bir yer bulamadım, ancak yine de civardaki insanlara sorabilirsiniz.", "bot-message");
             }
-        } catch (error) {
-            console.error("Harita verisi çekilemedi:", error);
+        } catch (e) {
+            console.warn("Harita yer verisi alınamadı:", e);
         }
     }
 
-    // --- HIZLI EYLEMLER ---
-    function handleQuickAction(type) {
-        let userMessage = "";
-        
-        if (type === 'namaz') {
-            userMessage = "Şu an bulunduğum konumda namaz kılmak istiyorum. Bana namazın fazileti hakkında kısa bir hadis/sünnet paylaşarak moral ver. (Haritada yakındaki camiler işaretleniyor...)";
-        } else if (type === 'yemek') {
-            userMessage = "Acıktım ve yemek yiyeceğim. Yemeğe başlarken, yerken ve sonrasında dikkat etmem gereken sünnetleri kısa ve samimi bir dille hatırlatır mısın? (Haritada yakındaki restoranlar işaretleniyor...)";
-        } else if (type === 'ihtiyac') {
-            userMessage = "İhtiyaç molası vereceğim. Tuvalet adabı ile ilgili (örneğin hangi ayakla girilir, çıkılır, okunacak dua) sünnetleri kısaca hatırlatır mısın? (Haritada yakındaki lavabolar işaretleniyor...)";
+    // --- YÖNLENDİRME KART TETİKLEYİCİSİ ---
+    function triggerGuidance(actionType) {
+        let promptText = "";
+
+        if (actionType === 'namaz') {
+            promptText = "Bulunduğum ortamda namaz kılmak için hazırlanıyorum. Bana vaktin ehemmiyeti ve ibadet adabı ile ilgili kısa, manevi bir rehberlik sunabilir misin?";
+            searchNearbyPlaces('namaz');
+        } else if (actionType === 'yemek') {
+            promptText = "Şu an yemek yiyeceğim. Sofra adabı, yemeğe başlama ve bitirme sünnetleri hakkında ne sölersin?";
+            searchNearbyPlaces('yemek');
+        } else if (actionType === 'ihtiyac') {
+            promptText = "İhtiyaç molasındayım. Temizlik ve hijyen hususundaki sünnetleri hatırlatır mısın?";
+            searchNearbyPlaces('ihtiyac');
+        } else if (actionType === 'danismanlik') {
+            promptText = "Zihnimi ve gönlümü ferahlatacak anlık bir manevi tavsiyeye ihtiyacım var.";
         }
 
-        document.getElementById("userInput").value = userMessage;
-        sendMessage();
-        
-        // Haritada yerleri bul
-        findNearbyPlaces(type);
+        switchMode('chat'); // Mesaj alındığında sohbet moduna geç
+        sendToGemini(promptText);
     }
 
-    // --- SOHBET VE GEMINI ENTEGRASYONU ---
-    function resetChat() {
-        if (confirm("Sohbet geçmişi temizlensin mi?")) {
-            chatHistory = [];
-            document.getElementById("chatArea").innerHTML = `<div class="message bot-message" id="welcomeMsg">Sohbet sıfırlandı.</div>`;
-            document.getElementById('mapContainer').classList.remove('active');
-        }
+    // --- MESAJ & GEMINI ENTEGRASYONU ---
+    function handleKeyPress(e) { if (e.key === 'Enter') handleSend(); }
+
+    function handleSend() {
+        const input = document.getElementById('userInput');
+        const text = input.value.trim();
+        if (!text) return;
+        input.value = "";
+
+        if (currentMode === 'guidance') switchMode('chat');
+        sendToGemini(text);
     }
 
-    async function sendMessage() {
-        const inputField = document.getElementById("userInput");
-        const userText = inputField.value.trim();
-        if (!userText) return;
+    async function sendToGemini(userText) {
+        appendMessage(userText, 'user-message');
 
-        appendMessage(userText, "user-message");
-        inputField.value = "";
+        const city = document.getElementById('profCity').value;
+        const env = document.getElementById('profEnv').value;
+        const gender = document.getElementById('profGender').value;
+        const age = document.getElementById('profAge').value;
+        const style = document.getElementById('responseStyle').value;
 
-        // Saat ve Konum Bağlamı Oluşturma
         const now = new Date();
-        const timeString = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
-        const dateString = now.toLocaleDateString('tr-TR', { weekday: 'long' });
-        
-        let locationContext = userLat ? `Enlem: ${userLat}, Boylam: ${userLng}` : "Konum izni verilmedi.";
+        const timeStr = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
 
-        if (chatHistory.length === 0) {
-            const systemPrompt = `Sen, kullanıcının o anki şartlarına (saat, hava durumu tahmini, kaos/trafik ihtimali vb.) göre Kur'an, Sünnet ve Hadisler ışığında en uygun İslami tavsiyeleri veren vazgeçilmez bir Manevi Yoldaş'sın. Müslümanın müslümanca yaşaması için samimi, şefkatli bir rehber ol. 
-Kullanıcının anlık durumu:
-- Saat: ${timeString}
-- Gün: ${dateString}
-- Konum (Lat/Lng): ${locationContext}
+        const systemPrompt = `[SİSTEM REHBERİ:
+Kullanıcı Şehir: ${city}, Ortam:${env}, Cinsiyet: ${gender}, Yaş: ${age}.
+Anlık Saat: ${timeStr}. Konum Koordinatı: ${userLat ? userLat+','+userLng : 'Bilinmiyor'}.
+Cevap Yaklaşım Modu: ${style}.
+GÖREV: Kullanıcıya samimi, Kur'an ve Sünnet ışığında, seçilen yaklaşım tarzına sadık kalarak yol göster. Türkçe cevap ver.]`;
 
-Görevin: Kullanıcının mesajına, bulunduğu saat ve konumu "aklederek" (örneğin sabah ise sabah duaları, trafikte ise sabır tavsiyesi, namaz vakti yaklaşıyorsa namaz hatırlatması) İslami perspektiften samimi, kısa ve doğrudan cevap vermektir.
-Kullanıcı Mesajı: "${userText}"`;
+        chatHistory.push({ role: "user", parts: [{ text: `${systemPrompt}\n\nKullanıcı Mesajı: ${userText}` }] });
 
-            chatHistory.push({ role: "user", parts: [{ text: systemPrompt }] });
-            const welcomeMsg = document.getElementById("welcomeMsg");
-            if(welcomeMsg) welcomeMsg.style.display = 'none';
-        } else {
-            chatHistory.push({ role: "user", parts: [{ text: userText + ` (Şu an saat: ${timeString})` }] });
-        }
-
-        showLoadingIndicator();
-        await fetchGeminiResponse();
-    }
-
-    async function fetchGeminiResponse() {
-        const url = '/api/gemini'; 
+        showLoading();
 
         try {
-            const response = await fetch(url, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
+            const res = await fetch('/api/gemini', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ contents: chatHistory })
             });
+            const data = await res.json();
+            removeLoading();
 
-            const data = await response.json();
-            removeLoadingIndicator();
-
-            if (data.error) throw new Error(data.error.message || "Hata oluştu.");
-
-            let botReply = data.candidates[0].content.parts[0].text;
-            chatHistory.push({ role: "model", parts: [{ text: botReply }] });
-            
-            appendMessage(botReply, "bot-message");
-            speakText(botReply); // Gelen cevabı sesli oku
-
-        } catch (error) {
-            removeLoadingIndicator();
-            appendMessage("Bağlantı hatası: " + error.message, "bot-message");
+            if (data.candidates && data.candidates[0].content.parts[0].text) {
+                const reply = data.candidates[0].content.parts[0].text;
+                chatHistory.push({ role: "model", parts: [{ text: reply }] });
+                appendMessage(reply, 'bot-message');
+                speakText(reply);
+            } else {
+                appendMessage("Bir yanıt oluşturulamadı.", 'bot-message');
+            }
+        } catch (err) {
+            removeLoading();
+            appendMessage("Bağlantı hatası oluştu: " + err.message, 'bot-message');
         }
     }
 
     function appendMessage(text, className) {
-        const chatArea = document.getElementById("chatArea");
-        const msgDiv = document.createElement("div");
-        msgDiv.className = `message ${className}`;
-        msgDiv.innerHTML = marked.parse(text);
-        chatArea.appendChild(msgDiv);
-        chatArea.scrollTop = chatArea.scrollHeight;
+        const container = document.getElementById('chatMessages');
+        const msg = document.createElement('div');
+        msg.className = `message ${className}`;
+        msg.innerHTML = marked.parse(text);
+        container.appendChild(msg);
+        container.scrollTop = container.scrollHeight;
     }
 
-    function showLoadingIndicator() {
-        const chatArea = document.getElementById("chatArea");
-        const loadingDiv = document.createElement("div");
-        loadingDiv.id = "loadingIndicator";
-        loadingDiv.className = "message bot-message typing-indicator";
-        loadingDiv.innerHTML = `<span></span><span></span><span></span>`;
-        chatArea.appendChild(loadingDiv);
-        chatArea.scrollTop = chatArea.scrollHeight;
+    function showLoading() {
+        const container = document.getElementById('chatMessages');
+        const loader = document.createElement('div');
+        loader.id = 'loading';
+        loader.className = 'message bot-message typing-indicator';
+        loader.innerHTML = '<span></span><span></span><span></span>';
+        container.appendChild(loader);
+        container.scrollTop = container.scrollHeight;
     }
 
-    function removeLoadingIndicator() {
-        const indicator = document.getElementById("loadingIndicator");
-        if (indicator) indicator.remove();
+    function removeLoading() {
+        const el = document.getElementById('loading');
+        if (el) el.remove();
     }
 
-    function handleKeyPress(event) {
-        if (event.key === "Enter") sendMessage();
+    // --- SESLİ OKUMA & PROFİL YÖNETİMİ ---
+    function toggleVoice() {
+        isVoiceActive = !isVoiceActive;
+        const btn = document.getElementById('voiceBtn');
+        btn.classList.toggle('active', isVoiceActive);
+        btn.innerHTML = isVoiceActive ? '<i class="fa-solid fa-volume-high"></i>' : '<i class="fa-solid fa-volume-xmark"></i>';
     }
 
-    // Uygulama açılışında konumu al
-    document.addEventListener("DOMContentLoaded", () => {
-        getUserLocation();
-    });
+    function speakText(text) {
+        if (!isVoiceActive || !window.speechSynthesis) return;
+        const clean = text.replace(/[*_#`]/g, '');
+        const utter = new SpeechSynthesisUtterance(clean);
+        utter.lang = 'tr-TR';
+        window.speechSynthesis.speak(utter);
+    }
+
+    function toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        document.getElementById('themeBtn').innerHTML = next === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+    }
+
+    function openProfileModal() { document.getElementById('profileModal').style.display = 'flex'; }
+    function closeProfileModal() { document.getElementById('profileModal').style.display = 'none'; }
+
+    function saveProfile() {
+        localStorage.setItem('profCity', document.getElementById('profCity').value);
+        localStorage.setItem('profEnv', document.getElementById('profEnv').value);
+        localStorage.setItem('profGender', document.getElementById('profGender').value);
+        localStorage.setItem('profAge', document.getElementById('profAge').value);
+        closeProfileModal();
+    }
+
+    function loadProfile() {
+        if (localStorage.getItem('profCity')) document.getElementById('profCity').value = localStorage.getItem('profCity');
+        if (localStorage.getItem('profEnv')) document.getElementById('profEnv').value = localStorage.getItem('profEnv');
+        if (localStorage.getItem('profGender')) document.getElementById('profGender').value = localStorage.getItem('profGender');
+        if (localStorage.getItem('profAge')) document.getElementById('profAge').value = localStorage.getItem('profAge');
+    }
 </script>
 
 </body>
