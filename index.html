@@ -206,6 +206,43 @@
             cursor: pointer;
         }
 
+        /* NAMAZ VAKİTLERİ BARI */
+        .prayer-times-bar {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .prayer-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--primary-light);
+        }
+
+        .prayer-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px;
+            text-align: center;
+        }
+
+        .prayer-item {
+            background: var(--bot-msg);
+            padding: 6px 4px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .prayer-name { font-size: 0.7rem; opacity: 0.8; font-weight: 600; }
+        .prayer-time { font-size: 0.82rem; font-weight: 700; color: var(--primary-light); margin-top: 2px; }
+
         .cards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -247,13 +284,12 @@
         .guide-card h3 { font-size: 0.95rem; font-weight: 600; }
         .guide-card p { font-size: 0.78rem; opacity: 0.8; }
 
-        /* CANLI HARİTA ALANI */
+        /* CANLI HARİTA ALANI (SABİT YÜKSEKLİK İLE DÜZELTİLDİ) */
         .map-section {
             display: flex;
             flex-direction: column;
             gap: 8px;
-            flex: 1;
-            min-height: 250px;
+            margin-bottom: 10px;
         }
 
         .map-section-title {
@@ -266,8 +302,8 @@
 
         #guidanceMap {
             width: 100%;
-            height: 100%;
-            min-height: 220px;
+            height: 280px; /* Flex yükseklik çökmesini önlemek için net yükseklik verilmiştir */
+            min-height: 280px;
             border-radius: var(--radius);
             border: 1px solid var(--border-color);
             z-index: 1;
@@ -455,7 +491,7 @@
     </header>
 
     <div class="content-area">
-        <!-- 1. YÖNLENDİRME MODU (Görsel Kartlar + Canlı Harita) -->
+        <!-- 1. YÖNLENDİRME MODU (Görsel Kartlar + Namaz Vakitleri + Canlı Harita) -->
         <div class="view-panel active" id="guidanceView">
             <div class="guidance-container">
                 <!-- Konum Durum Çubuğu -->
@@ -465,6 +501,22 @@
                         <span id="locStatusText">Konum aranıyor...</span>
                     </div>
                     <button class="btn-small" onclick="requestLocation()"><i class="fa-solid fa-location-crosshairs"></i> Konumu Yenile</button>
+                </div>
+
+                <!-- Güncel Namaz Vakitleri Paneli -->
+                <div class="prayer-times-bar">
+                    <div class="prayer-title">
+                        <span><i class="fa-solid fa-clock"></i> Günlük Namaz Vakitleri (Diyanet)</span>
+                        <small id="prayerDateText">Yükleniyor...</small>
+                    </div>
+                    <div class="prayer-grid">
+                        <div class="prayer-item"><div class="prayer-name">İmsak</div><div class="prayer-time" id="t-fajr">--:--</div></div>
+                        <div class="prayer-item"><div class="prayer-name">Güneş</div><div class="prayer-time" id="t-sunrise">--:--</div></div>
+                        <div class="prayer-item"><div class="prayer-name">Öğle</div><div class="prayer-time" id="t-dhuhr">--:--</div></div>
+                        <div class="prayer-item"><div class="prayer-name">İkindi</div><div class="prayer-time" id="t-asr">--:--</div></div>
+                        <div class="prayer-item"><div class="prayer-name">Akşam</div><div class="prayer-time" id="t-maghrib">--:--</div></div>
+                        <div class="prayer-item"><div class="prayer-name">Yatsı</div><div class="prayer-time" id="t-isha">--:--</div></div>
+                    </div>
                 </div>
 
                 <!-- Hızlı Yönlendirme Kartları -->
@@ -573,23 +625,40 @@
 
 <script>
     // --- DURUM YÖNETİMİ ---
-    let currentMode = 'guidance'; // 'guidance' veya 'chat'
+    let currentMode = 'guidance';
     let userLat = null;
     let userLng = null;
     let map = null;
     let markers = [];
     let chatHistory = [];
     let isVoiceActive = false;
+    let cachedPrayerTimesText = "";
 
     // --- BAŞLANGIÇ YÜKLEMELERİ ---
     document.addEventListener("DOMContentLoaded", () => {
         initTheme();
         initMap();
-        requestLocation();
         loadProfile();
+        requestLocation();
     });
 
-    // --- MOD DEĞİŞTİRME (Yönlendirme vs Sohbet) ---
+    // --- TEMA VE SİSTEM İLKLENDİRME ---
+    function initTheme() {
+        const savedTheme = localStorage.getItem('appTheme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        const btn = document.getElementById('themeBtn');
+        if (btn) btn.innerHTML = savedTheme === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+    }
+
+    function toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('appTheme', next);
+        document.getElementById('themeBtn').innerHTML = next === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+    }
+
+    // --- MOD DEĞİŞTİRME ---
     function switchMode(mode) {
         currentMode = mode;
         document.getElementById('tabGuidance').classList.toggle('active', mode === 'guidance');
@@ -605,14 +674,15 @@
 
     // --- HARİTA VE GEOLOCATION İŞLEMLERİ ---
     function initMap() {
-        // Varsayılan koordinat (Ankara/Türkiye ortalaması)
-        const defaultLat = 39.92077;
+        const defaultLat = 39.92077; // Türkiye Genel Koordinat
         const defaultLng = 32.85411;
 
         map = L.map('guidanceMap').setView([defaultLat, defaultLng], 12);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap'
         }).addTo(map);
+
+        setTimeout(() => map.invalidateSize(), 500);
     }
 
     function requestLocation() {
@@ -622,7 +692,7 @@
 
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(
-                (pos) => {
+                async (pos) => {
                     userLat = pos.coords.latitude;
                     userLng = pos.coords.longitude;
                     
@@ -636,15 +706,22 @@
                             .bindPopup("<b>Mevcut Konumunuz</b>").openPopup();
                         markers.push(userMarker);
                     }
+
+                    // Konum alındıktan sonra Aladhan API ile Namaz Vakitlerini Çek
+                    await fetchPrayerTimes(userLat, userLng);
                 },
-                (err) => {
+                async (err) => {
                     dot.classList.remove('active');
-                    statusText.innerText = "Konum izni verilemedi (Şehir profili kullanılacak).";
+                    const city = document.getElementById('profCity').value || "İstanbul";
+                    statusText.innerText = `GPS alınamadı (${city} vakitleri kullanılacak).`;
+                    await fetchPrayerTimesByCity(city);
                 },
                 { timeout: 10000, enableHighAccuracy: true }
             );
         } else {
-            statusText.innerText = "Tarayıcı konum desteği sunmuyor.";
+            const city = document.getElementById('profCity').value || "İstanbul";
+            statusText.innerText = "Tarayıcı GPS desteklemiyor.";
+            fetchPrayerTimesByCity(city);
         }
     }
 
@@ -653,15 +730,56 @@
         markers = [];
     }
 
-    // OVERPASS API İLE YAKIN YERLERİ ARAMA
+    // --- ALADHAN NAMAZ VAKİTLERİ API ENTEGRASYONU (Method 13 = Diyanet İşleri) ---
+    async function fetchPrayerTimes(lat, lng) {
+        try {
+            const timestamp = Math.floor(Date.now() / 1000);
+            const res = await fetch(`https://api.aladhan.com/v1/timings/${timestamp}?latitude=${lat}&longitude=${lng}&method=13`);
+            const data = await res.json();
+            if (data.code === 200 && data.data) {
+                updatePrayerUI(data.data);
+            }
+        } catch (e) {
+            console.warn("Namaz vakti API hatası:", e);
+        }
+    }
+
+    async function fetchPrayerTimesByCity(cityName) {
+        try {
+            const res = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(cityName)}&country=Turkey&method=13`);
+            const data = await res.json();
+            if (data.code === 200 && data.data) {
+                updatePrayerUI(data.data);
+            }
+        } catch (e) {
+            console.warn("Şehir ile namaz vakti çekilemedi:", e);
+        }
+    }
+
+    function updatePrayerUI(data) {
+        const t = data.timings;
+        document.getElementById('t-fajr').innerText = t.Fajr;
+        document.getElementById('t-sunrise').innerText = t.Sunrise;
+        document.getElementById('t-dhuhr').innerText = t.Dhuhr;
+        document.getElementById('t-asr').innerText = t.Asr;
+        document.getElementById('t-maghrib').innerText = t.Maghrib;
+        document.getElementById('t-isha').innerText = t.Isha;
+
+        if (data.date && data.date.readable) {
+            document.getElementById('prayerDateText').innerText = data.date.readable;
+        }
+
+        cachedPrayerTimesText = `Bugünün Namaz Vakitleri (Diyanet): İmsak: ${t.Fajr}, Güneş: ${t.Sunrise}, Öğle: ${t.Dhuhr}, İkindi: ${t.Asr}, Akşam: ${t.Maghrib}, Yatsı: ${t.Isha}`;
+    }
+
+    // --- OVERPASS API İLE HARİTADA YER ARAMA ---
     async function searchNearbyPlaces(type) {
         if (!userLat || !userLng) {
-            alert("Yakındaki yerleri haritada göstermek için konum izni gereklidir.");
+            alert("Haritada yakın yerleri aramak için konum izni gereklidir.");
             return;
         }
 
         clearMarkers();
-        // Kullanıcı pinini ekle
         const userMarker = L.marker([userLat, userLng]).addTo(map).bindPopup("<b>Mevcut Konumunuz</b>");
         markers.push(userMarker);
 
@@ -678,34 +796,34 @@
 
             if (data.elements && data.elements.length > 0) {
                 data.elements.forEach(place => {
-                    const name = place.tags.name || (type === 'namaz' ? 'Cami/Mescid' : 'Sosyal Tesis');
+                    const name = place.tags.name || (type === 'namaz' ? 'Cami / Mescid' : 'Sosyal Nokta');
                     const m = L.marker([place.lat, place.lon]).addTo(map).bindPopup(`<b>${name}</b>`);
                     markers.push(m);
                 });
             }
         } catch (e) {
-            console.warn("Harita yer verisi alınamadı:", e);
+            console.warn("Overpass API harita verisi alınamadı:", e);
         }
     }
 
     // --- YÖNLENDİRME KART TETİKLEYİCİSİ ---
-    function triggerGuidance(actionType) {
+    async function triggerGuidance(actionType) {
         let promptText = "";
 
         if (actionType === 'namaz') {
-            promptText = "Bulunduğum ortamda namaz kılmak için hazırlanıyorum. Bana vaktin ehemmiyeti ve ibadet adabı ile ilgili kısa, manevi bir rehberlik sunabilir misin?";
             searchNearbyPlaces('namaz');
+            promptText = `Bulunduğum konumda namaza hazırlanıyorum. ${cachedPrayerTimesText}. Vaktin ehemmiyeti, sıradaki vakit ve namaz adabı ile ilgili kısa manevi bir rehberlik sunar mısın?`;
         } else if (actionType === 'yemek') {
-            promptText = "Şu an yemek yiyeceğim. Sofra adabı, yemeğe başlama ve bitirme sünnetleri hakkında ne sölersin?";
             searchNearbyPlaces('yemek');
+            promptText = "Şu an yemek yiyeceğim. Sofra adabı, yemeğe başlama ve bitirme sünnetleri hakkında ne tavsiye edersin?";
         } else if (actionType === 'ihtiyac') {
-            promptText = "İhtiyaç molasındayım. Temizlik ve hijyen hususundaki sünnetleri hatırlatır mısın?";
             searchNearbyPlaces('ihtiyac');
+            promptText = "İhtiyaç molasındayım. Temizlik ve hijyen hususundaki sünnetleri ve adabı hatırlatır mısın?";
         } else if (actionType === 'danismanlik') {
-            promptText = "Zihnimi ve gönlümü ferahlatacak anlık bir manevi tavsiyeye ihtiyacım var.";
+            promptText = "Gönlümü ve zihnimi ferahlatacak anlık manevi bir tavsiyeye ihtiyacım var.";
         }
 
-        switchMode('chat'); // Mesaj alındığında sohbet moduna geç
+        switchMode('chat');
         sendToGemini(promptText);
     }
 
@@ -737,6 +855,7 @@
         const systemPrompt = `[SİSTEM REHBERİ:
 Kullanıcı Şehir: ${city}, Ortam:${env}, Cinsiyet: ${gender}, Yaş: ${age}.
 Anlık Saat: ${timeStr}. Konum Koordinatı: ${userLat ? userLat+','+userLng : 'Bilinmiyor'}.
+${cachedPrayerTimesText}
 Cevap Yaklaşım Modu: ${style}.
 GÖREV: Kullanıcıya samimi, Kur'an ve Sünnet ışığında, seçilen yaklaşım tarzına sadık kalarak yol göster. Türkçe cevap ver.]`;
 
@@ -807,22 +926,21 @@ GÖREV: Kullanıcıya samimi, Kur'an ve Sünnet ışığında, seçilen yaklaş�
         window.speechSynthesis.speak(utter);
     }
 
-    function toggleTheme() {
-        const current = document.documentElement.getAttribute('data-theme');
-        const next = current === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', next);
-        document.getElementById('themeBtn').innerHTML = next === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
-    }
-
     function openProfileModal() { document.getElementById('profileModal').style.display = 'flex'; }
     function closeProfileModal() { document.getElementById('profileModal').style.display = 'none'; }
 
     function saveProfile() {
-        localStorage.setItem('profCity', document.getElementById('profCity').value);
+        const city = document.getElementById('profCity').value;
+        localStorage.setItem('profCity', city);
         localStorage.setItem('profEnv', document.getElementById('profEnv').value);
         localStorage.setItem('profGender', document.getElementById('profGender').value);
         localStorage.setItem('profAge', document.getElementById('profAge').value);
         closeProfileModal();
+
+        // Şehir değiştiyse namaz vakitlerini güncelle
+        if (!userLat || !userLng) {
+            fetchPrayerTimesByCity(city);
+        }
     }
 
     function loadProfile() {
