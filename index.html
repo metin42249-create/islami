@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>İslâmî Rehber - Hayat Yönetimi & Manevi Yoldaş</title>
+    <title>İslâmî Zeka - Manevi Yoldaş & Yönlendirme Rehberi</title>
     
     <!-- FontAwesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -24,9 +24,6 @@
             --shadow: 0 4px 15px rgba(0,0,0,0.05);
             --radius: 14px;
             --transition: all 0.3s ease;
-            --danger: #e63946;
-            --success: #2a9d8f;
-            --info: #457b9d;
         }
 
         [data-theme="dark"] {
@@ -53,87 +50,96 @@
             display: flex;
             justify-content: center;
             overflow: hidden;
-            flex-direction: column;
         }
-
-        /* BESMELE HEADER */
-        .bismillah-bar {
-            background-color: var(--primary);
-            color: var(--accent);
-            text-align: center;
-            padding: 8px 5px;
-            font-size: 0.9rem;
-            line-height: 1.3;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            z-index: 20;
-            flex-shrink: 0;
-        }
-        .bismillah-bar .tr-meaning { font-size: 0.75rem; color: white; opacity: 0.9; }
 
         .app-container {
             width: 100%;
             max-width: 900px;
-            margin: 0 auto;
             background: var(--card-bg);
             display: flex;
             flex-direction: column;
             height: 100%;
             box-shadow: var(--shadow);
             position: relative;
-            overflow: hidden;
         }
 
-        /* HEADER */
+        /* HEADER & MODE SWITCHER */
         header {
             background-color: var(--primary);
             color: white;
-            padding: 12px 16px;
+            padding: 12px 20px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
             flex-shrink: 0;
             z-index: 10;
         }
 
-        .header-top { display: flex; justify-content: space-between; align-items: center; }
-        .header-top h1 { font-size: 1.15rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-        .header-actions { display: flex; gap: 12px; }
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-        .icon-btn { background: none; border: none; color: white; font-size: 1.1rem; cursor: pointer; opacity: 0.85; transition: var(--transition); }
+        .header-top h1 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            opacity: 0.85;
+            transition: var(--transition);
+        }
         .icon-btn.active { color: var(--accent); opacity: 1; }
         .icon-btn:hover { opacity: 1; transform: scale(1.1); }
 
-        /* SCROLLABLE TABS */
+        /* MOD SEÇİCİ TABLARI */
         .mode-nav {
             display: flex;
             background: rgba(0, 0, 0, 0.2);
             padding: 4px;
             border-radius: 10px;
             gap: 4px;
-            overflow-x: auto;
-            white-space: nowrap;
         }
-        .mode-nav::-webkit-scrollbar { display: none; }
-        
+
         .mode-tab {
-            flex: 0 0 auto;
+            flex: 1;
             padding: 8px 12px;
             border: none;
             background: transparent;
             color: white;
-            font-size: 0.85rem;
+            font-size: 0.88rem;
             font-weight: 600;
             border-radius: 8px;
             cursor: pointer;
             transition: var(--transition);
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 6px;
             opacity: 0.7;
         }
-        .mode-tab.active { background: var(--primary-light); opacity: 1; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
 
-        /* CONTENT AREAS */
+        .mode-tab.active {
+            background: var(--primary-light);
+            opacity: 1;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        /* BÖLÜM ALANLARI */
         .content-area {
             flex: 1;
             overflow-y: auto;
@@ -142,268 +148,428 @@
             flex-direction: column;
         }
 
-        .view-panel { display: none; height: 100%; flex-direction: column; padding: 16px; gap: 16px; overflow-y: auto; }
-        .view-panel.active { display: flex; }
+        .view-panel {
+            display: none;
+            height: 100%;
+            flex-direction: column;
+        }
 
-        /* REHBERLİK & DİNAMİK BİLGİLER */
-        .status-bar {
+        .view-panel.active {
+            display: flex;
+        }
+
+        /* YÖNLENDİRME MODU TASARIMI */
+        .guidance-container {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            overflow-y: auto;
+        }
+
+        .location-status-bar {
             background-color: var(--bot-msg);
             border: 1px solid var(--border-color);
-            padding: 12px;
+            padding: 10px 14px;
             border-radius: var(--radius);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+
+        .location-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--primary-light);
+        }
+
+        .btn-small {
+            background: var(--primary-light);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* NAMAZ VAKİTLERİ BARI */
+        .prayer-times-bar {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .prayer-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--primary-light);
+        }
+
+        .prayer-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px;
+            text-align: center;
+        }
+
+        .prayer-item {
+            background: var(--bot-msg);
+            padding: 8px 4px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .prayer-name { font-size: 0.7rem; opacity: 0.8; font-weight: 600; }
+        .prayer-time { font-size: 0.82rem; font-weight: 700; color: var(--primary-light); margin-top: 4px; }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+        }
+
+        .guide-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .guide-card:hover {
+            border-color: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--user-msg);
+            color: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .guide-card h3 { font-size: 0.95rem; font-weight: 600; }
+        .guide-card p { font-size: 0.78rem; opacity: 0.8; }
+
+        /* SOHBET MODU TASARIMI */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .response-style-bar {
+            background: var(--bot-msg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 16px;
             display: flex;
             flex-direction: column;
             gap: 8px;
             font-size: 0.85rem;
+            flex-shrink: 0;
         }
-        .location-info { display: flex; justify-content: space-between; align-items: center; font-weight: 600; color: var(--primary-light); }
-        .important-days { color: var(--accent); font-weight: bold; font-size: 0.8rem; background: var(--primary); padding: 6px 10px; border-radius: 6px; text-align: center; }
 
-        .btn-small { background: var(--primary-light); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+        .style-select-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-        .prayer-times-bar { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 12px; display: flex; flex-direction: column; gap: 12px; }
-        .prayer-title { font-size: 0.85rem; font-weight: 600; display: flex; justify-content: space-between; align-items: center; color: var(--primary-light); }
-        .prayer-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; text-align: center; }
-        .prayer-item { background: var(--bot-msg); padding: 8px 4px; border-radius: 8px; border: 1px solid var(--border-color); }
-        .prayer-name { font-size: 0.7rem; opacity: 0.8; font-weight: 600; }
-        .prayer-time { font-size: 0.82rem; font-weight: 700; color: var(--primary-light); margin-top: 4px; }
+        .response-style-bar select, .response-style-bar input {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-color);
+            font-size: 0.85rem;
+            outline: none;
+        }
 
-        .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
-        .guide-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 16px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; cursor: pointer; transition: var(--transition); }
-        .guide-card:hover { border-color: var(--primary-light); transform: translateY(-2px); box-shadow: var(--shadow); }
-        .card-icon { width: 44px; height: 44px; border-radius: 50%; background: var(--user-msg); color: var(--primary-light); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
-        .guide-card h3 { font-size: 0.9rem; font-weight: 600; }
-        .guide-card p { font-size: 0.75rem; opacity: 0.8; }
+        .chat-messages {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
 
-        /* REHBERE SOR (SOHBET) */
-        .response-style-bar { background: var(--bot-msg); border-radius: var(--radius); border: 1px solid var(--border-color); padding: 10px; display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem; margin-bottom: 10px; flex-shrink:0;}
-        .style-select-wrapper { display: flex; align-items: center; gap: 10px; }
-        .response-style-bar select, .response-style-bar input { flex: 1; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color); font-size: 0.85rem; outline: none; }
+        .message {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            font-size: 0.92rem;
+            line-height: 1.5;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
         
-        .chat-messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-bottom: 10px;}
-        .message { max-width: 85%; padding: 12px 16px; border-radius: var(--radius); font-size: 0.9rem; line-height: 1.5; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .message p { margin: 0 0 8px 0; } .message p:last-child { margin-bottom: 0; }
-        .user-message { align-self: flex-end; background-color: var(--user-msg); border-bottom-right-radius: 2px; }
-        .bot-message { align-self: flex-start; background-color: var(--bot-msg); border: 1px solid var(--border-color); border-bottom-left-radius: 2px; }
+        .message p { margin: 0 0 8px 0; }
+        .message p:last-child { margin-bottom: 0; }
+        .message ul, .message ol { margin: 6px 0; padding-left: 20px; }
 
-        .input-area { padding: 12px; border-top: 1px solid var(--border-color); display: none; gap: 8px; background: var(--card-bg); flex-shrink: 0; }
-        .input-area.active { display: flex; }
-        .input-area input { flex: 1; padding: 12px 16px; border-radius: 24px; border: 1px solid var(--border-color); outline: none; background: var(--bg-color); color: var(--text-color); font-size: 0.9rem; }
-        .btn-send { background: var(--primary-light); color: white; border: none; border-radius: 24px; padding: 0 18px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .user-message {
+            align-self: flex-end;
+            background-color: var(--user-msg);
+            border-bottom-right-radius: 2px;
+        }
 
-        /* GÖREVLER (KANBAN) */
-        .kanban-controls { display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
-        .kanban-board { display: flex; flex-direction: column; gap: 15px; width: 100%; } /* Alt alta dizilim */
-        .kanban-col { background: var(--bg-color); border-radius: var(--radius); padding: 12px; border: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 10px; }
-        .kanban-col-header { display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 0.95rem; color: var(--primary-light); }
-        .kanban-nav-btns button { background: none; border: none; color: var(--text-color); cursor: pointer; padding: 2px 5px; font-size: 1rem; }
-        
-        .task-list { display: flex; flex-direction: column; gap: 8px; min-height: 20px; }
-        .task-card { background: var(--card-bg); padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .task-actions { display: flex; gap: 6px; }
-        .task-actions button { background: var(--border-color); border: none; color: var(--text-color); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; }
-        .task-actions button.has-note { background: var(--accent); color: #000; font-weight: bold;}
+        .bot-message {
+            align-self: flex-start;
+            background-color: var(--bot-msg);
+            border: 1px solid var(--border-color);
+            border-bottom-left-radius: 2px;
+        }
 
-        /* FİNANS */
-        .fin-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 10px; }
-        .summary-card { background: var(--bg-color); padding: 12px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 0.95rem; border: 1px solid var(--border-color); }
-        .summary-card.gelir { color: var(--success); } .summary-card.gider { color: var(--danger); } .summary-card.bakiye { color: var(--info); }
-        .fin-form { display: flex; flex-direction: column; gap: 8px; background: var(--bg-color); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); }
-        .fin-form input, .fin-form select { padding: 10px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color); }
-        
-        .fin-table-wrapper { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; min-width: 400px; font-size: 0.85rem; }
-        th, td { border: 1px solid var(--border-color); padding: 8px; text-align: left; }
-        th { background: var(--primary-light); color: white; }
-        td input, td select { width: 100%; background: transparent; border: none; color: var(--text-color); outline: none; }
+        /* PROFİL AYARLARI PANELİ */
+        .modal-panel {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            padding: 20px;
+        }
 
-        /* TAKVİM */
-        .etkinlik-form { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
-        .etkinlik-form input { padding: 10px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); }
-        .etk-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-        .etk-item { background: var(--bg-color); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; }
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
 
-        /* MODALLAR (Profil & Görev Notu) */
-        .modal-panel { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 100; padding: 16px; backdrop-filter: blur(3px); }
-        .modal-content { background: var(--card-bg); border-radius: var(--radius); width: 100%; max-width: 500px; padding: 20px; display: flex; flex-direction: column; gap: 14px; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; font-weight: 600; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; color: var(--primary-light); font-size: 1.1rem; }
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            color: var(--primary-light);
+            font-size: 1.1rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+        }
+
         .form-group { display: flex; flex-direction: column; gap: 6px; }
-        .form-group label { font-size: 0.8rem; font-weight: 600; opacity: 0.9; }
-        .form-group input, .form-group select { padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); outline: none; }
+        .form-group label { font-size: 0.8rem; font-weight: 600; opacity: 0.9; text-transform: uppercase; letter-spacing: 0.5px;}
+        .form-group input, .form-group select {
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-color);
+            color: var(--text-color);
+            outline: none;
+            font-size: 0.95rem;
+        }
         
-        textarea.note-area { width: 100%; height: 200px; resize: vertical; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); outline: none; font-family: monospace; line-height: 1.5; }
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--primary-light);
+        }
 
-        /* Utils */
-        .btn-red { background-color: var(--danger); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
-        .btn-green { background-color: var(--success); color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        .btn-blue { background-color: var(--info); color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        .w-100 { width: 100%; }
+        /* GİRDİ ALANI */
+        .input-area {
+            padding: 12px 16px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 8px;
+            background: var(--card-bg);
+            flex-shrink: 0;
+        }
+
+        .input-area input {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            outline: none;
+            background: var(--bg-color);
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+
+        .btn-send {
+            background: var(--primary-light);
+            color: white;
+            border: none;
+            border-radius: 24px;
+            padding: 0 18px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .btn-send:hover { background: var(--primary); }
+
+        .typing-indicator {
+            display: flex; gap: 4px; align-items: center; padding: 6px 0;
+        }
+        .typing-indicator span {
+            width: 6px; height: 6px; background: var(--primary-light); border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
         
-        ::-webkit-scrollbar { width: 5px; height: 5px; }
-        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 5px; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
     </style>
 </head>
 <body>
 
-<div class="bismillah-bar">
-    <div style="font-size: 1.1rem; font-weight: bold; margin-bottom:2px;">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>
-    <div class="tr-meaning">Rahmân ve Rahîm olan Allah'ın adıyla</div>
-</div>
-
 <div class="app-container">
     <header>
         <div class="header-top">
-            <h1><i class="fa-solid fa-kaaba"></i> İslâmî Rehber</h1>
+            <h1><i class="fa-solid fa-kaaba"></i> İslâmî Zeka</h1>
             <div class="header-actions">
                 <button class="icon-btn" onclick="toggleVoice()" id="voiceBtn" title="Sesli Okuma"><i class="fa-solid fa-volume-xmark"></i></button>
                 <button class="icon-btn" onclick="toggleTheme()" id="themeBtn" title="Tema"><i class="fa-solid fa-sun"></i></button>
-                <button class="icon-btn" onclick="openProfileModal()" title="Profil"><i class="fa-solid fa-user-gear"></i></button>
-                <button class="icon-btn" onclick="exportData()" title="Yedeği İndir"><i class="fa-solid fa-download"></i></button>
-                <button class="icon-btn" onclick="document.getElementById('fileUpload').click()" title="Yedek Yükle"><i class="fa-solid fa-upload"></i></button>
-                <input type="file" id="fileUpload" accept=".json" style="display:none" onchange="importData(event)">
+                <button class="icon-btn" onclick="openProfileModal()" title="Profil Ayarları"><i class="fa-solid fa-user-gear"></i></button>
             </div>
         </div>
-        
+        <!-- MOD SEÇİCİ NAVİGASYON -->
         <div class="mode-nav">
-            <button class="mode-tab active" id="tabGuidance" onclick="switchMode('guidance')"><i class="fa-solid fa-compass"></i> Rehberlik</button>
-            <button class="mode-tab" id="tabChat" onclick="switchMode('chat')"><i class="fa-solid fa-comments"></i> Rehbere Sor</button>
-            <button class="mode-tab" id="tabKanban" onclick="switchMode('kanban')"><i class="fa-solid fa-list-check"></i> Görevler</button>
-            <button class="mode-tab" id="tabFinans" onclick="switchMode('finans')"><i class="fa-solid fa-wallet"></i> Finans</button>
-            <button class="mode-tab" id="tabTakvim" onclick="switchMode('takvim')"><i class="fa-solid fa-calendar-days"></i> Takvim</button>
+            <button class="mode-tab active" id="tabGuidance" onclick="switchMode('guidance')">
+                <i class="fa-solid fa-compass"></i> Yönlendirme Modu
+            </button>
+            <button class="mode-tab" id="tabChat" onclick="switchMode('chat')">
+                <i class="fa-solid fa-comments"></i> Sohbet Modu
+            </button>
         </div>
     </header>
 
     <div class="content-area">
-        <!-- 1. REHBERLİK MODU -->
+        <!-- 1. YÖNLENDİRME MODU -->
         <div class="view-panel active" id="guidanceView">
-            <div class="status-bar">
-                <div class="location-info">
-                    <span><i class="fa-solid fa-city"></i> <span id="locStatusText">Şehir Bekleniyor...</span></span>
-                    <button class="btn-small" onclick="openProfileModal()"><i class="fa-solid fa-pen"></i></button>
+            <div class="guidance-container">
+                <!-- Şehir Durum Çubuğu -->
+                <div class="location-status-bar">
+                    <div class="location-info">
+                        <i class="fa-solid fa-city"></i> Seçili Şehir: <span id="locStatusText">Kırıkkale</span>
+                    </div>
+                    <button class="btn-small" onclick="openProfileModal()"><i class="fa-solid fa-pen"></i> Şehri Değiştir</button>
                 </div>
-                <div class="important-days" id="importantDaysText">
-                    <i class="fa-solid fa-star"></i> Güncel Takvim Taraması Yapılıyor...
-                </div>
-            </div>
 
-            <div class="prayer-times-bar">
-                <div class="prayer-title">
-                    <span><i class="fa-solid fa-clock"></i> Namaz Vakitleri</span>
-                    <small id="prayerDateText">Yükleniyor...</small>
+                <!-- Güncel Namaz Vakitleri Paneli -->
+                <div class="prayer-times-bar">
+                    <div class="prayer-title">
+                        <span><i class="fa-solid fa-clock"></i> Namaz Vakitleri (Diyanet)</span>
+                        <small id="prayerDateText">Yükleniyor...</small>
+                    </div>
+                    <div class="prayer-grid">
+                        <div class="prayer-item"><div class="prayer-name">İmsak</div><div class="prayer-time" id="t-fajr">--:--</div></div>
+                        <div class="prayer-item"><div class="prayer-name">Güneş</div><div class="prayer-time" id="t-sunrise">--:--</div></div>
+                        <div class="prayer-item"><div class="prayer-name">Öğle</div><div class="prayer-time" id="t-dhuhr">--:--</div></div>
+                        <div class="prayer-item"><div class="prayer-name">İkindi</div><div class="prayer-time" id="t-asr">--:--</div></div>
+                        <div class="prayer-item"><div class="prayer-name">Akşam</div><div class="prayer-time" id="t-maghrib">--:--</div></div>
+                        <div class="prayer-item"><div class="prayer-name">Yatsı</div><div class="prayer-time" id="t-isha">--:--</div></div>
+                    </div>
                 </div>
-                <div class="prayer-grid">
-                    <div class="prayer-item"><div class="prayer-name">İmsak</div><div class="prayer-time" id="t-fajr">--:--</div></div>
-                    <div class="prayer-item"><div class="prayer-name">Güneş</div><div class="prayer-time" id="t-sunrise">--:--</div></div>
-                    <div class="prayer-item"><div class="prayer-name">Öğle</div><div class="prayer-time" id="t-dhuhr">--:--</div></div>
-                    <div class="prayer-item"><div class="prayer-name">İkindi</div><div class="prayer-time" id="t-asr">--:--</div></div>
-                    <div class="prayer-item"><div class="prayer-name">Akşam</div><div class="prayer-time" id="t-maghrib">--:--</div></div>
-                    <div class="prayer-item"><div class="prayer-name">Yatsı</div><div class="prayer-time" id="t-isha">--:--</div></div>
-                </div>
-            </div>
 
-            <div class="cards-grid">
-                <div class="guide-card" onclick="triggerGuidance('namaz')">
-                    <div class="card-icon"><i class="fa-solid fa-mosque"></i></div>
-                    <h3>İbadet & Namaz</h3>
-                    <p>Vaktin ehemmiyeti</p>
-                </div>
-                <div class="guide-card" onclick="triggerGuidance('yemek')">
-                    <div class="card-icon"><i class="fa-solid fa-utensils"></i></div>
-                    <h3>Yeme İçme</h3>
-                    <p>Sofra adabı ve sünnetler</p>
-                </div>
-                <div class="guide-card" onclick="triggerGuidance('ihtiyac')">
-                    <div class="card-icon"><i class="fa-solid fa-restroom"></i></div>
-                    <h3>Temizlik</h3>
-                    <p>Hijyen ve fıkıh</p>
-                </div>
-                <div class="guide-card" onclick="triggerGuidance('danismanlik')">
-                    <div class="card-icon"><i class="fa-solid fa-hand-holding-heart"></i></div>
-                    <h3>Manevi Destek</h3>
-                    <p>Ruhsal ferahlama</p>
+                <!-- Hızlı Yönlendirme Kartları -->
+                <div class="cards-grid">
+                    <div class="guide-card" onclick="triggerGuidance('namaz')">
+                        <div class="card-icon"><i class="fa-solid fa-mosque"></i></div>
+                        <h3>İbadet & Namaz</h3>
+                        <p>Vaktin ehemmiyeti ve ibadet sünnetleri</p>
+                    </div>
+                    <div class="guide-card" onclick="triggerGuidance('yemek')">
+                        <div class="card-icon"><i class="fa-solid fa-utensils"></i></div>
+                        <h3>Yeme İçme</h3>
+                        <p>Sofra adabı ve bereket sünnetleri</p>
+                    </div>
+                    <div class="guide-card" onclick="triggerGuidance('ihtiyac')">
+                        <div class="card-icon"><i class="fa-solid fa-restroom"></i></div>
+                        <h3>Temizlik & Hijyen</h3>
+                        <p>Temizlik adabı ve sünnetleri</p>
+                    </div>
+                    <div class="guide-card" onclick="triggerGuidance('danismanlik')">
+                        <div class="card-icon"><i class="fa-solid fa-hand-holding-heart"></i></div>
+                        <h3>Manevi Danışman</h3>
+                        <p>Anlık ruh haline özel tavsiye</p>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- 2. REHBERE SOR MODU -->
+        <!-- 2. SOHBET MODU -->
         <div class="view-panel" id="chatView">
-            <div class="response-style-bar">
-                <div class="style-select-wrapper">
-                    <i class="fa-solid fa-sliders"></i>
-                    <select id="responseStyle" onchange="handleStyleChange()" style="flex:1;">
-                        <option value="standart">Sohbet & Yoldaşlık (Samimi)</option>
-                        <option value="soru_cevap">Peygamberimiz (S.A.V.) nasıl cevap verirdi?</option>
-                        <option value="yerimde_olsa">Peygamberimiz benim yerimde olsa ne yapardı?</option>
-                        <option value="bunun_yerine">Bunun yerine Sünnetteki doğrusu nedir?</option>
-                        <option value="diger">Diğer (Özel Üslup)</option>
-                    </select>
+            <div class="chat-container">
+                <div class="response-style-bar">
+                    <div class="style-select-wrapper">
+                        <i class="fa-solid fa-sliders"></i>
+                        <label for="responseStyle">Rehber Yaklaşımı:</label>
+                        <select id="responseStyle" onchange="handleStyleChange()">
+                            <option value="standart">Sohbet & Yoldaşlık (Samimi)</option>
+                            <option value="soru_cevap">Peygamberimiz (S.A.V.) bu soruya nasıl cevap verirdi?</option>
+                            <option value="yerimde_olsa">Peygamberimiz benim yerimde/durumumda olsa ne yapardı?</option>
+                            <option value="bunun_yerine">Şu an yaptığımın/düşündüğümün yerine Sünnetteki doğrusu nedir?</option>
+                            <option value="diger">Diğer (Kendi Yönlendirmeni Yaz)</option>
+                        </select>
+                    </div>
+                    <!-- Özel rehber yaklaşımı girişi -->
+                    <div id="customStyleGroup" style="display: none; padding-top: 4px;">
+                        <input type="text" id="customStyleInput" placeholder="AI nasıl bir üslup/yaklaşım sergilesin? (Örn: 'Sadece Ayet ve Hadis kaynaklarıyla cevapla')" oninput="saveStylePreferences()">
+                    </div>
                 </div>
-                <div id="customStyleGroup" style="display: none;">
-                    <input type="text" id="customStyleInput" placeholder="Nasıl bir üslup sergilesin? (Örn: Sadece Hadislerle)" oninput="saveData()">
-                </div>
-            </div>
 
-            <div class="chat-messages" id="chatMessages">
-                <div class="message bot-message">
-                    Selamun aleykum. "Rehberlik" bölümünden hızlı eylem seçebilir veya buradan serbestçe sorunuzu yazabilirsiniz.
-                </div>
-            </div>
-        </div>
-
-        <!-- 3. GÖREVLER (KANBAN) -->
-        <div class="view-panel" id="kanbanView">
-            <div class="kanban-controls">
-                <button class="btn-blue w-100" onclick="addKanbanGroup()">➕ Yeni Kategori Ekle</button>
-            </div>
-            <div class="kanban-board" id="kanbanBoard"></div>
-        </div>
-
-        <!-- 4. FİNANS -->
-        <div class="view-panel" id="finansView">
-            <div class="fin-summary">
-                <div class="summary-card gelir" id="lblTotalGelir">Gelir: 0 ₺</div>
-                <div class="summary-card gider" id="lblTotalGider">Gider: 0 ₺</div>
-                <div class="summary-card bakiye" id="lblTotalBakiye">Bakiye: 0 ₺</div>
-            </div>
-            
-            <div class="fin-form">
-                <input type="text" id="finDescInput" placeholder="Açıklama (Örn: Kira)">
-                <div style="display:flex; gap:8px;">
-                    <input type="number" id="finAmountInput" placeholder="Tutar (₺)" style="flex:1;">
-                    <select id="finTypeCombo" style="flex:1;">
-                        <option value="Gider">Gider</option>
-                        <option value="Gelir">Gelir</option>
-                    </select>
-                </div>
-                <div style="display:flex; gap:8px;">
-                    <input type="date" id="finDateInput" style="flex:1;">
-                    <button class="btn-green" style="flex:1;" onclick="addFinansRecord()">Ekle</button>
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message bot-message">
+                        Selamun aleykum. Yönlendirme Modu'ndan hızlı eylem seçebilir veya buradan serbestçe sorunuzu yazabilirsiniz.
+                    </div>
                 </div>
             </div>
-
-            <div class="fin-table-wrapper">
-                <table>
-                    <thead><tr><th>İşlem</th><th>Tutar</th><th>Tür</th><th>Tarih</th><th>Sil</th></tr></thead>
-                    <tbody id="finTableBody"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- 5. TAKVİM -->
-        <div class="view-panel" id="takvimView">
-            <div class="etkinlik-form">
-                <input type="date" id="etkDateInput">
-                <input type="text" id="etkDescInput" placeholder="Hatırlatıcı / Olay (Örn: Oruç Günü)">
-                <button class="btn-blue" onclick="addEtkinlikRecord()">Takvime İşle</button>
-            </div>
-            <ul class="etk-list" id="etkList"></ul>
         </div>
     </div>
 
-    <!-- ALT MESAJ GİRİŞ ALANI (Sadece Sohbet Modunda Görünür) -->
-    <div class="input-area" id="chatInputArea">
-        <input type="text" id="userInput" placeholder="Sorunuzu buraya yazın..." onkeypress="handleKeyPress(event)">
+    <!-- ALT MESAJ GİRİŞ ALANI -->
+    <div class="input-area">
+        <input type="text" id="userInput" placeholder="Mesajınızı veya sorunuzu yazın..." onkeypress="handleKeyPress(event)">
         <button class="btn-send" onclick="handleSend()"><i class="fa-solid fa-paper-plane"></i></button>
     </div>
 </div>
@@ -412,391 +578,362 @@
 <div class="modal-panel" id="profileModal">
     <div class="modal-content">
         <div class="modal-header">
-            <span><i class="fa-solid fa-address-card"></i> Profil & Konfigürasyon</span>
-            <span style="cursor:pointer;" onclick="closeModals()"><i class="fa-solid fa-xmark"></i></span>
+            <span><i class="fa-solid fa-address-card"></i> Kişisel Profil Bilgileri</span>
+            <span style="cursor:pointer; padding:5px;" onclick="closeProfileModal()"><i class="fa-solid fa-xmark"></i></span>
         </div>
         <div class="form-grid">
-            <div class="form-group"><label>Şehir:</label><input type="text" id="profCity" placeholder="Örn: Kırıkkale"></div>
-            <div class="form-group"><label>Ortam:</label>
-                <select id="profEnv">
+            <div class="form-group">
+                <label>Şehir (Namaz Vakitleri İçin):</label>
+                <input type="text" id="profCity" value="Kırıkkale" placeholder="Örn: Ankara">
+            </div>
+            <div class="form-group">
+                <label>Bulunduğunuz Ortam:</label>
+                <select id="profEnv" onchange="handleEnvChange()">
                     <option value="Ev">Ev</option>
-                    <option value="İş Yeri">İş Yeri</option>
-                    <option value="Okul">Okul / Üniversite</option>
-                    <option value="Dışarıda">Dışarıda / Yolda</option>
+                    <option value="İş Yeri / Ofis">İş Yeri / Ofis</option>
+                    <option value="Okul / Üniversite">Okul / Üniversite</option>
+                    <option value="Yolculuk / Yolda">Yolculuk / Yolda</option>
+                    <option value="Dışarıda / Sosyal Ortam">Dışarıda / Sosyal Ortam</option>
+                    <option value="Diğer">Diğer (Elle Giriş)</option>
                 </select>
             </div>
-            <div class="form-group"><label>Cinsiyet:</label>
-                <select id="profGender"><option value="Erkek">Erkek</option><option value="Kadın">Kadın</option><option value="Belirtilmedi">Belirtilmedi</option></select>
+            <!-- Diğer seçeneği için özel ortam girişi -->
+            <div class="form-group" id="customEnvGroup" style="display: none;">
+                <label>Ortamı Belirtin:</label>
+                <input type="text" id="customEnvInput" placeholder="Ortamınızı yazın...">
             </div>
-            <div class="form-group"><label>Yaş:</label><input type="number" id="profAge" placeholder="Örn: 25"></div>
-            <div class="form-group"><label>Boy (cm):</label><input type="number" id="profHeight" placeholder="Örn: 175"></div>
-            <div class="form-group"><label>Kilo (kg):</label><input type="number" id="profWeight" placeholder="Örn: 70"></div>
-            <div class="form-group"><label>Sağlık Durumu:</label>
-                <select id="profHealth"><option value="Sağlıklı">Sağlıklı / Zinde</option><option value="Hasta/Yorgun">Hasta / Yorgun</option></select>
+            <div class="form-group">
+                <label>Cinsiyet:</label>
+                <select id="profGender">
+                    <option value="Erkek">Erkek</option>
+                    <option value="Kadın">Kadın</option>
+                    <option value="Belirtmek İstemiyorum">Belirtmek İstemiyorum</option>
+                </select>
             </div>
-            <div class="form-group"><label>Maddi Durum:</label>
-                <select id="profFinance"><option value="Normal">Orta Hal / Normal</option><option value="Dar">Dar Gelirli</option><option value="Geniş">Varlıklı</option></select>
+            <div class="form-group">
+                <label>Yaş Grubu:</label>
+                <select id="profAge">
+                    <option value="Çocuk (7-12 yaş)">Çocuk (7-12 yaş)</option>
+                    <option value="Genç (13-18 yaş)">Genç (13-18 yaş)</option>
+                    <option value="Yetişkin (19-64 yaş)" selected>Yetişkin (19-64 yaş)</option>
+                    <option value="Yaşlı (65+ yaş)">Yaşlı (65+ yaş)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Sağlık Durumu:</label>
+                <select id="profHealth">
+                    <option value="Sağlıklı" selected>Sağlıklı / Sıhhatli</option>
+                    <option value="Hasta / Yorgun">Hasta / Rahatsız / Yorgun</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Maddi Durum:</label>
+                <select id="profFinance">
+                    <option value="Orta Hal / Normal" selected>Orta Hal / Normal</option>
+                    <option value="Dar Gelirli">Dar Gelirli</option>
+                    <option value="Varlıklı">Varlıklı</option>
+                </select>
             </div>
         </div>
-        <button class="btn-green w-100" style="margin-top:10px;" onclick="saveProfile()"><i class="fa-solid fa-floppy-disk"></i> Ayarları Kaydet</button>
-    </div>
-</div>
-
-<!-- GÖREV NOTU MODAL -->
-<div class="modal-panel" id="taskNoteModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <span><i class="fa-solid fa-note-sticky"></i> Görev Notu</span>
-            <span style="cursor:pointer;" onclick="closeModals()"><i class="fa-solid fa-xmark"></i></span>
-        </div>
-        <textarea id="taskNoteArea" class="note-area" placeholder="Bu göreve özel detayları, alınacakları veya stratejileri buraya yazın..."></textarea>
-        <button class="btn-blue w-100" onclick="saveTaskNote()"><i class="fa-solid fa-check"></i> Notu Kaydet</button>
+        <button class="btn-send" style="padding:12px; margin-top:10px;" onclick="saveProfile()">
+            <i class="fa-solid fa-floppy-disk"></i> Ayarları Kaydet
+        </button>
     </div>
 </div>
 
 <script>
-    // --- MERKEZİ VERİ TABANI (TEK JSON) ---
-    // DÜZELTME: Profil verisindeki anahtarların kodun geri kalanıyla (City, Env vs.) eşleşmesi için İngilizce anahtarlarla güncellendi.
-    let appData = JSON.parse(localStorage.getItem('islami_rehber_data')) || {
-        profil: { city: "Kırıkkale", env: "Ev", gender: "Erkek", age: "", height: "", weight: "", health: "Sağlıklı", finance: "Normal" },
-        style: { mode: "standart", custom: "" },
-        kanban: [
-            { title: "GÜNLÜK HEDEFLER", tasks: [{ name: "Sabah Namazı Cemaat", note: "" }] },
-            { title: "DÜNYALIK İŞLER", tasks: [{ name: "Kitap Okuma", note: "10 sayfa siyer" }] }
-        ],
-        finans: [],
-        etkinlikler: []
-    };
-
+    // --- DURUM YÖNETİMİ ---
+    let currentMode = 'guidance';
     let chatHistory = [];
     let isVoiceActive = false;
     let cachedPrayerTimesText = "";
-    let activeTaskIndex = null; // {gIdx, tIdx}
 
+    // --- BAŞLANGIÇ YÜKLEMELERİ ---
     document.addEventListener("DOMContentLoaded", () => {
         initTheme();
-        initUI();
+        loadProfile();
+        loadStylePreferences();
         updateCityDisplayAndTimes();
     });
 
-    // --- GENEL UI & KAYIT ---
-    function initUI() {
-        // Profil form doldur
-        ['City','Env','Gender','Age','Height','Weight','Health','Finance'].forEach(k => {
-            const el = document.getElementById('prof' + k);
-            const val = appData.profil[k.toLowerCase()];
-            if(el && val !== undefined) el.value = val;
-        });
-        
-        // Chat style doldur
-        document.getElementById('responseStyle').value = appData.style.mode || 'standart';
-        document.getElementById('customStyleInput').value = appData.style.custom || '';
-        handleStyleChange();
-
-        // Panelleri Çiz
-        renderKanban();
-        renderFinans();
-        renderEtkinlik();
-        
-        document.getElementById('etkDateInput').value = new Date().toISOString().split('T')[0];
-    }
-
-    function saveData() {
-        appData.style.mode = document.getElementById('responseStyle').value;
-        appData.style.custom = document.getElementById('customStyleInput').value;
-        localStorage.setItem('islami_rehber_data', JSON.stringify(appData));
-    }
-
-    function switchMode(mode) {
-        document.querySelectorAll('.mode-tab').forEach(btn => btn.classList.remove('active'));
-        document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
-        
-        document.getElementById('tab' + mode.charAt(0).toUpperCase() + mode.slice(1)).classList.add('active');
-        document.getElementById(mode + 'View').classList.add('active');
-
-        // Sadece chat modunda input alanı görünsün
-        const chatInput = document.getElementById('chatInputArea');
-        if(mode === 'chat') chatInput.classList.add('active');
-        else chatInput.classList.remove('active');
-    }
-
-    function closeModals() {
-        document.getElementById('profileModal').style.display = 'none';
-        document.getElementById('taskNoteModal').style.display = 'none';
-    }
-
-    // --- TEMA & SES ---
+    // --- TEMA İŞLEMLERİ ---
     function initTheme() {
-        const t = localStorage.getItem('appTheme') || 'light';
-        document.documentElement.setAttribute('data-theme', t);
-        document.getElementById('themeBtn').innerHTML = t === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+        const savedTheme = localStorage.getItem('appTheme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        const btn = document.getElementById('themeBtn');
+        if (btn) btn.innerHTML = savedTheme === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
     }
+
     function toggleTheme() {
-        const t = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', t);
-        localStorage.setItem('appTheme', t);
-        document.getElementById('themeBtn').innerHTML = t === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
-    }
-    function toggleVoice() {
-        isVoiceActive = !isVoiceActive;
-        document.getElementById('voiceBtn').innerHTML = isVoiceActive ? '<i class="fa-solid fa-volume-high"></i>' : '<i class="fa-solid fa-volume-xmark"></i>';
-        document.getElementById('voiceBtn').classList.toggle('active', isVoiceActive);
-        if(!isVoiceActive && window.speechSynthesis) window.speechSynthesis.cancel();
+        const current = document.documentElement.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('appTheme', next);
+        document.getElementById('themeBtn').innerHTML = next === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
     }
 
-    // --- PROFİL ---
-    function openProfileModal() { document.getElementById('profileModal').style.display = 'flex'; }
-    function saveProfile() {
-        ['City','Env','Gender','Age','Height','Weight','Health','Finance'].forEach(k => {
-            appData.profil[k.toLowerCase()] = document.getElementById('prof' + k).value;
-        });
-        saveData();
-        closeModals();
-        updateCityDisplayAndTimes();
+    // --- MOD DEĞİŞTİRME ---
+    function switchMode(mode) {
+        currentMode = mode;
+        document.getElementById('tabGuidance').classList.toggle('active', mode === 'guidance');
+        document.getElementById('tabChat').classList.toggle('active', mode === 'chat');
+        
+        document.getElementById('guidanceView').classList.toggle('active', mode === 'guidance');
+        document.getElementById('chatView').classList.toggle('active', mode === 'chat');
     }
 
-    // --- NAMAZ VAKİTLERİ & ÖNEMLİ GÜNLER (ALADHAN) ---
-    async function fetchPrayerTimesByCity(city) {
+    // --- ALADHAN NAMAZ VAKİTLERİ API ---
+    async function fetchPrayerTimesByCity(cityName) {
         try {
             document.getElementById('prayerDateText').innerText = "Yükleniyor...";
-            const res = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(city)}&country=Turkey&method=13`);
+            const res = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(cityName)}&country=Turkey&method=13`);
             const data = await res.json();
-            if (data.code === 200) {
-                const t = data.data.timings;
-                document.getElementById('t-fajr').innerText = t.Fajr;
-                document.getElementById('t-sunrise').innerText = t.Sunrise;
-                document.getElementById('t-dhuhr').innerText = t.Dhuhr;
-                document.getElementById('t-asr').innerText = t.Asr;
-                document.getElementById('t-maghrib').innerText = t.Maghrib;
-                document.getElementById('t-isha').innerText = t.Isha;
-                document.getElementById('prayerDateText').innerText = data.data.date.readable;
-                cachedPrayerTimesText = `İmsak: ${t.Fajr}, Öğle: ${t.Dhuhr}, İkindi: ${t.Asr}, Akşam: ${t.Maghrib}, Yatsı: ${t.Isha}`;
-                
-                // Dinamik Önemli Günler Hesaplaması
-                calculateImportantDays(data.data.date.hijri);
+            if (data.code === 200 && data.data) {
+                updatePrayerUI(data.data);
+            } else {
+                document.getElementById('prayerDateText').innerText = "Vakitler alınamadı.";
             }
-        } catch (e) { document.getElementById('prayerDateText').innerText = "Bağlantı Hatası."; }
+        } catch (e) {
+            console.warn("Şehir ile namaz vakti çekilemedi:", e);
+            document.getElementById('prayerDateText').innerText = "Bağlantı hatası.";
+        }
     }
 
-    function calculateImportantDays(hijriObj) {
-        let events = [];
-        const today = new Date();
-        const m = today.getMonth() + 1; const d = today.getDate(); const dow = today.getDay();
-        
-        // Dini Günler (Hicri ve Cuma)
-        if(dow === 5) events.push("🕌 Mübarek Cuma Günü");
-        if(hijriObj.month.number === 9) events.push("🌙 Ramazan-ı Şerif");
-        if(hijriObj.month.number === 12 && hijriObj.day >= 10 && hijriObj.day <= 13) events.push("🕋 Kurban Bayramı");
-        if(hijriObj.month.number === 10 && hijriObj.day >= 1 && hijriObj.day <= 3) events.push("🍬 Ramazan Bayramı");
-        if(hijriObj.month.number === 1 && hijriObj.day === 10) events.push("🕊️ Aşure Günü");
+    function updatePrayerUI(data) {
+        const t = data.timings;
+        document.getElementById('t-fajr').innerText = t.Fajr;
+        document.getElementById('t-sunrise').innerText = t.Sunrise;
+        document.getElementById('t-dhuhr').innerText = t.Dhuhr;
+        document.getElementById('t-asr').innerText = t.Asr;
+        document.getElementById('t-maghrib').innerText = t.Maghrib;
+        document.getElementById('t-isha').innerText = t.Isha;
 
-        // Milli Günler (Miladi)
-        if(d===23 && m===4) events.push("🇹🇷 23 Nisan");
-        if(d===19 && m===5) events.push("🇹🇷 19 Mayıs");
-        if(d===30 && m===8) events.push("🇹🇷 30 Ağustos");
-        if(d===29 && m===10) events.push("🇹🇷 29 Ekim Cumhuriyet Bayramı");
+        if (data.date && data.date.readable) {
+            document.getElementById('prayerDateText').innerText = data.date.readable;
+        }
 
-        const el = document.getElementById('importantDaysText');
-        // DÜZELTME: Orijinal koddaki hatalı `\vert{}\vert{}` yapısı `||` mantıksal operatörü ile değiştirildi. (Bu satır JS'i tamamen çökertiyordu)
-        if(events.length > 0) el.innerHTML = events.join(" | ");
-        else el.innerHTML = `Hicri: ${hijriObj.day} ${hijriObj.month.tr \vert{}\vert{} hijriObj.month.en}${hijriObj.year}`;
+        cachedPrayerTimesText = `Bugünün Namaz Vakitleri (Diyanet): İmsak: ${t.Fajr}, Güneş: ${t.Sunrise}, Öğle: ${t.Dhuhr}, İkindi: ${t.Asr}, Akşam: ${t.Maghrib}, Yatsı: ${t.Isha}`;
     }
 
     function updateCityDisplayAndTimes() {
-        const c = appData.profil.city || "Kırıkkale";
-        document.getElementById('locStatusText').innerText = c;
-        fetchPrayerTimesByCity(c);
+        const city = document.getElementById('profCity').value || "Kırıkkale";
+        document.getElementById('locStatusText').innerText = city;
+        fetchPrayerTimesByCity(city);
     }
 
-    // --- KANBAN SİSTEMİ (ALT ALTA VE NOTLU) ---
-    function renderKanban() {
-        const board = document.getElementById('kanbanBoard');
-        board.innerHTML = '';
-        appData.kanban.forEach((group, gIdx) => {
-            const col = document.createElement('div');
-            col.className = 'kanban-col';
-            col.innerHTML = `
-                <div class="kanban-col-header">
-                    <span>${group.title}</span>
-                    <button class="btn-red" style="padding: 2px 6px; font-size:12px;" onclick="deleteKanbanGroup(${gIdx})">✕ Sil</button>
-                </div>
-                <input type="text" placeholder="Yeni görev yazıp Enter'a basın..." style="padding:8px; border-radius:6px; border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-color);" onkeypress="if(event.key==='Enter') addTask(${gIdx}, this)">
-                <div class="task-list" id="task-list-${gIdx}"></div>
-            `;
-            const list = col.querySelector('.task-list');
-            group.tasks.forEach((task, tIdx) => {
-                const card = document.createElement('div');
-                card.className = 'task-card';
-                const hasNote = task.note && task.note.trim().length > 0;
-                card.innerHTML = `
-                    <span style="flex:1;">${task.name}</span>
-                    <div class="task-actions">
-                        <button class="${hasNote ? 'has-note' : ''}" title="Not Ekle/Düzenle" onclick="openTaskNote(${gIdx},${tIdx})">📝</button>
-                        <button title="Sil" onclick="deleteTask(${gIdx},${tIdx})">🗑️</button>
-                    </div>
-                `;
-                list.appendChild(card);
-            });
-            board.appendChild(col);
-        });
-    }
+    // --- YÖNLENDİRME KART TETİKLEYİCİSİ ---
+    async function triggerGuidance(actionType) {
+        let promptText = "";
 
-    function addKanbanGroup() {
-        const title = prompt("Yeni Sütun Adı:");
-        if(title) { appData.kanban.push({title, tasks: []}); saveData(); renderKanban(); }
-    }
-    function deleteKanbanGroup(idx) {
-        if(confirm("Sütun silinecek?")) { appData.kanban.splice(idx,1); saveData(); renderKanban(); }
-    }
-    function addTask(gIdx, el) {
-        if(el.value.trim()) { appData.kanban[gIdx].tasks.push({name: el.value.trim(), note:""}); el.value=''; saveData(); renderKanban(); }
-    }
-    function deleteTask(gIdx, tIdx) {
-        appData.kanban[gIdx].tasks.splice(tIdx,1); saveData(); renderKanban();
-    }
-    
-    function openTaskNote(gIdx, tIdx) {
-        activeTaskIndex = { gIdx, tIdx };
-        document.getElementById('taskNoteArea').value = appData.kanban[gIdx].tasks[tIdx].note || "";
-        document.getElementById('taskNoteModal').style.display = 'flex';
-    }
-    function saveTaskNote() {
-        if(activeTaskIndex) {
-            appData.kanban[activeTaskIndex.gIdx].tasks[activeTaskIndex.tIdx].note = document.getElementById('taskNoteArea').value;
-            saveData(); renderKanban();
+        if (actionType === 'namaz') {
+            promptText = `Bulunduğum şehirde namaza hazırlanıyorum. ${cachedPrayerTimesText}. Vaktin ehemmiyeti, sıradaki vakit ve namaz adabı ile ilgili kısa manevi bir rehberlik sunar mısın?`;
+        } else if (actionType === 'yemek') {
+            promptText = "Şu an yemek yiyeceğim. Sofra adabı, yemeğe başlama ve bitirme sünnetleri hakkında ne tavsiye edersin?";
+        } else if (actionType === 'ihtiyac') {
+            promptText = "İhtiyaç molasındayım. Temizlik ve hijyen hususundaki sünnetleri ve adabı hatırlatır mısın?";
+        } else if (actionType === 'danismanlik') {
+            promptText = "Gönlümü ve zihnimi ferahlatacak anlık manevi bir tavsiyeye ihtiyacım var.";
         }
-        closeModals();
-    }
 
-    // --- FİNANS ---
-    function renderFinans() {
-        const tbody = document.getElementById('finTableBody');
-        tbody.innerHTML = ''; let g=0, d=0;
-        appData.finans.forEach((item, i) => {
-            const v = parseFloat(item.tutar) || 0;
-            if(item.tip === 'Gelir') g+=v; else d+=v;
-            tbody.innerHTML += `<tr>
-                <td><input type="text" value="${item.tanim}" onchange="updFin(${i},'tanim',this.value)"></td>
-                <td><input type="number" value="${item.tutar}" onchange="updFin(${i},'tutar',this.value)"></td>
-                <td><select onchange="updFin(${i},'tip',this.value)"><option ${item.tip==='Gider'?'selected':''}>Gider</option><option${item.tip==='Gelir'?'selected':''}>Gelir</option></select></td>
-                <td><input type="date" value="${item.tarih}" onchange="updFin(${i},'tarih',this.value)"></td>
-                <td><button class="btn-red" style="padding:4px 8px;" onclick="delFin(${i})">Sil</button></td>
-            </tr>`;
-        });
-        document.getElementById('lblTotalGelir').innerText = `Gelir: ${g} ₺`;
-        document.getElementById('lblTotalGider').innerText = `Gider: ${d} ₺`;
-        document.getElementById('lblTotalBakiye').innerText = `Bakiye: ${g-d} ₺`;
-    }
-    function addFinansRecord() {
-        const tanim = document.getElementById('finDescInput').value, tutar = document.getElementById('finAmountInput').value, tip = document.getElementById('finTypeCombo').value, tarih = document.getElementById('finDateInput').value;
-        if(tanim && tutar) { appData.finans.push({tanim, tutar, tip, tarih}); saveData(); renderFinans(); }
-    }
-    function updFin(i,f,v) { appData.finans[i][f]=v; saveData(); renderFinans(); }
-    function delFin(i) { appData.finans.splice(i,1); saveData(); renderFinans(); }
-
-    // --- TAKVİM ---
-    function renderEtkinlik() {
-        const l = document.getElementById('etkList'); l.innerHTML = '';
-        appData.etkinlikler.sort((a,b)=> (a.tarih||'').localeCompare(b.tarih||'')).forEach((item, i) => {
-            l.innerHTML += `<li class="etk-item"><span><strong>[${item.tarih}]</strong>${item.is}</span><button class="btn-red" onclick="delEtk(${i})">Sil</button></li>`;
-        });
-    }
-    function addEtkinlikRecord() {
-        const t=document.getElementById('etkDateInput').value, i=document.getElementById('etkDescInput').value;
-        if(t&&i) { appData.etkinlikler.push({tarih:t, is:i}); saveData(); renderEtkinlik(); }
-    }
-    function delEtk(i) { appData.etkinlikler.splice(i,1); saveData(); renderEtkinlik(); }
-
-    // --- VERİ DIŞA/İÇE AKTARIM ---
-    function exportData() {
-        const b = new Blob([JSON.stringify(appData, null, 2)], {type:'application/json'});
-        const a = document.createElement('a'); a.href = URL.createObjectURL(b);
-        a.download = `islami_rehber_yedek_${new Date().toISOString().split('T')[0]}.json`; a.click();
-    }
-    function importData(e) {
-        const f = e.target.files[0]; if(!f) return;
-        const r = new FileReader();
-        r.onload = ev => {
-            try { appData = JSON.parse(ev.target.result); saveData(); initUI(); alert("Yüklendi."); } catch(err) { alert("Geçersiz dosya."); }
-        }; r.readAsText(f);
-    }
-
-    // --- REHBERLİK CHAT & GEMINI ENT. ---
-    function handleStyleChange() {
-        document.getElementById('customStyleGroup').style.display = document.getElementById('responseStyle').value === 'diger' ? 'block' : 'none';
-        saveData();
-    }
-    async function triggerGuidance(type) {
-        let msg = "";
-        if(type==='namaz') msg = `Namaz vaktindeyiz. Durum: ${cachedPrayerTimesText}. Vaktin ehemmiyeti ve namaz adabı hakkında manevi rehberlik sunar mısın?`;
-        else if(type==='yemek') msg = "Yemek yiyeceğim. Sofra adabı ve sünnetleri hakkında tavsiye verir misin?";
-        else if(type==='ihtiyac') msg = "Temizlik ve hijyen hususundaki İslam fıkhı ve sünnetleri hatırlatır mısın?";
-        else if(type==='danismanlik') msg = "Gönlümü ferahlatacak manevi bir tavsiyeye ihtiyacım var.";
-        
         switchMode('chat');
-        sendToGemini(msg);
+        sendToGemini(promptText);
     }
-    function handleKeyPress(e) { if(e.key === 'Enter') handleSend(); }
+
+    // --- YAKLAŞIM STİLİ & DİĞER KONTROLÜ ---
+    function handleStyleChange() {
+        const styleSelect = document.getElementById('responseStyle');
+        const customGroup = document.getElementById('customStyleGroup');
+        customGroup.style.display = styleSelect.value === 'diger' ? 'block' : 'none';
+        saveStylePreferences();
+    }
+
+    function saveStylePreferences() {
+        localStorage.setItem('responseStyle', document.getElementById('responseStyle').value);
+        localStorage.setItem('customStyleInput', document.getElementById('customStyleInput').value);
+    }
+
+    function loadStylePreferences() {
+        const savedStyle = localStorage.getItem('responseStyle');
+        const savedCustomInput = localStorage.getItem('customStyleInput');
+        if (savedStyle) document.getElementById('responseStyle').value = savedStyle;
+        if (savedCustomInput) document.getElementById('customStyleInput').value = savedCustomInput;
+        handleStyleChange();
+    }
+
+    // --- MESAJ & GEMINI ENTEGRASYONU ---
+    function handleKeyPress(e) { if (e.key === 'Enter') handleSend(); }
+
     function handleSend() {
-        const text = document.getElementById('userInput').value.trim();
-        if(text) { document.getElementById('userInput').value=''; sendToGemini(text); }
+        const input = document.getElementById('userInput');
+        const text = input.value.trim();
+        if (!text) return;
+        input.value = "";
+
+        if (currentMode === 'guidance') switchMode('chat');
+        sendToGemini(text);
     }
 
     async function sendToGemini(userText) {
-        appendMsg(userText, 'user-message');
-        
-        const p = appData.profil;
-        let s = appData.style.mode;
-        let styleIns = "";
-        if(s==='soru_cevap') styleIns="Hz. Muhammed (S.A.V.) öğretileri ve Hadislerle cevapla.";
-        else if(s==='yerimde_olsa') styleIns="Peygamberimiz benim durumumda olsa ne yapardı, onu rehber al.";
-        else if(s==='bunun_yerine') styleIns="Bahsedilen eylemin yerine Sünnetteki doğrusunu öner.";
-        else if(s==='diger') styleIns=appData.style.custom || "Samimi dost dili.";
-        else styleIns="Samimi, içten ve manevi yoldaş dili kullan.";
+        appendMessage(userText, 'user-message');
 
-        // DÜZELTME: p.cinsiyet, p.yas vb. Türkçe değişkenler yerine düzeltilmiş olan p.gender, p.age atandı.
-        const sysPrompt = `[SİSTEM: Kullanıcı:${p.gender}, Yaş:${p.age}, Boy/Kilo:${p.height}/${p.weight}, Şehir:${p.city}, Ortam:${p.env}. Namaz:${cachedPrayerTimesText}. YAKLAŞIM: ${styleIns}]`;
+        const city = document.getElementById('profCity').value;
+        const envSelect = document.getElementById('profEnv').value;
+        const customEnv = document.getElementById('customEnvInput').value;
+        const env = (envSelect === 'Diğer' && customEnv.trim() !== '') ? customEnv : envSelect;
         
-        const reqContents = [...chatHistory, {role:"user", parts:[{text: `${sysPrompt}\n\nSoru:${userText}`}]}];
+        const gender = document.getElementById('profGender').value;
+        const age = document.getElementById('profAge').value;
+        const health = document.getElementById('profHealth').value;
+        const finance = document.getElementById('profFinance').value;
+        
+        // Yaklaşım Stili Yönetimi
+        const styleSelect = document.getElementById('responseStyle').value;
+        const customStyleInput = document.getElementById('customStyleInput').value;
+        let styleInstruction = "";
 
-        const loader = document.createElement('div');
-        loader.className='message bot-message'; loader.innerText = 'Rehber düşünüyor...';
-        document.getElementById('chatMessages').appendChild(loader);
+        switch(styleSelect) {
+            case 'soru_cevap':
+                styleInstruction = "YAKLAŞIM TARZI: Kullanıcının sorusuna doğrudan Hz. Muhammed (S.A.V.)'in usulü, üslubu, Hadis-i Şerifleri ve öğretileriyle nasıl yanıt verileceğini açıklayarak cevap ver.";
+                break;
+            case 'yerimde_olsa':
+                styleInstruction = "YAKLAŞIM TARZI: Kullanıcının içinde bulunduğu durumu/ruh halini dikkate al. Hz. Muhammed (S.A.V.) benzer bir durumla karşılaşsa nasıl davranırdı, nasıl bir tutum sergilerdi, bunu rehber alarak yol göster.";
+                break;
+            case 'bunun_yerine':
+                styleInstruction = "YAKLAŞIM TARZI: Kullanıcının bahsettiği eyleme/düşünceye odaklan. Bu eylemin yerine Sünnet-i Seniyye'ye en uygun, daha bereketli ve doğru alternatif davranışı/ameli öner.";
+                break;
+            case 'diger':
+                styleInstruction = customStyleInput.trim() !== '' 
+                    ? `YAKLAŞIM TARZI (Özel Kullanıcı Yönlendirmesi): ${customStyleInput}` 
+                    : "YAKLAŞIM TARZI: Samimi, yapıcı ve manevi bir dost dili kullan.";
+                break;
+            default:
+                styleInstruction = "YAKLAŞIM TARZI: Samimi, içten ve manevi bir dost diliyle sohbet et.";
+        }
+
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+
+        const systemPrompt = `[SİSTEM REHBERİ:
+Kullanıcı Şehir: ${city}, Ortam:${env}, Cinsiyet: ${gender}, Yaş Grubu: ${age}, Sağlık Durumu: ${health}, Maddi Durum:${finance}.
+Anlık Saat: ${timeStr}. ${cachedPrayerTimesText}${styleInstruction}
+GÖREV: Kullanıcıya samimi, Kur'an ve Sünnet ışığında, belirtilen YAKLAŞIM TARZINA sadık kalarak yol göster. Türkçe cevap ver.]`;
+
+        // İstek gönderirken sohbet geçmişini temiz bir formatta tutuyoruz
+        const requestContents = [
+            ...chatHistory,
+            { role: "user", parts: [{ text: `${systemPrompt}\n\nKullanıcı Mesajı: ${userText}` }] }
+        ];
+
+        showLoading();
 
         try {
-            // Vercel /api/gemini endpointine post
             const res = await fetch('/api/gemini', {
-                method: 'POST', headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({contents: reqContents})
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: requestContents })
             });
             const data = await res.json();
-            loader.remove();
-            
+            removeLoading();
+
             if (data.candidates && data.candidates[0].content.parts[0].text) {
                 const reply = data.candidates[0].content.parts[0].text;
-                chatHistory.push({role:"user", parts:[{text: userText}]});
-                chatHistory.push({role:"model", parts:[{text: reply}]});
-                appendMsg(reply, 'bot-message');
+                // Sohbet geçmişine temiz kullanıcı mesajını ve model cevabını kaydediyoruz
+                chatHistory.push({ role: "user", parts: [{ text: userText }] });
+                chatHistory.push({ role: "model", parts: [{ text: reply }] });
+                
+                appendMessage(reply, 'bot-message');
                 speakText(reply);
-            } else { appendMsg("Cevap alınamadı.", 'bot-message'); }
-        } catch (e) { loader.remove(); appendMsg("Bağlantı hatası: Vercel API uç noktası kontrol edilmeli.", 'bot-message'); }
+            } else {
+                appendMessage("Bir yanıt oluşturulamadı.", 'bot-message');
+            }
+        } catch (err) {
+            removeLoading();
+            appendMessage("Bağlantı hatası oluştu: " + err.message, 'bot-message');
+        }
     }
 
-    function appendMsg(txt, cls) {
-        const c = document.getElementById('chatMessages');
-        const m = document.createElement('div');
-        m.className = `message ${cls}`;
-        m.innerHTML = marked.parse(txt);
-        c.appendChild(m);
-        c.scrollTop = c.scrollHeight;
+    function appendMessage(text, className) {
+        const container = document.getElementById('chatMessages');
+        const msg = document.createElement('div');
+        msg.className = `message ${className}`;
+        msg.innerHTML = marked.parse(text);
+        container.appendChild(msg);
+        container.scrollTop = container.scrollHeight;
     }
-    
-    function speakText(txt) {
-        if(!isVoiceActive || !window.speechSynthesis) return;
-        window.speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(txt.replace(/[*_#`]/g, ''));
-        u.lang = 'tr-TR'; window.speechSynthesis.speak(u);
+
+    function showLoading() {
+        const container = document.getElementById('chatMessages');
+        const loader = document.createElement('div');
+        loader.id = 'loading';
+        loader.className = 'message bot-message typing-indicator';
+        loader.innerHTML = '<span></span><span></span><span></span>';
+        container.appendChild(loader);
+        container.scrollTop = container.scrollHeight;
+    }
+
+    function removeLoading() {
+        const el = document.getElementById('loading');
+        if (el) el.remove();
+    }
+
+    // --- SESLİ OKUMA & PROFİL YÖNETİMİ ---
+    function toggleVoice() {
+        isVoiceActive = !isVoiceActive;
+        const btn = document.getElementById('voiceBtn');
+        btn.classList.toggle('active', isVoiceActive);
+        btn.innerHTML = isVoiceActive ? '<i class="fa-solid fa-volume-high"></i>' : '<i class="fa-solid fa-volume-xmark"></i>';
+        
+        if (!isVoiceActive && window.speechSynthesis) {
+            window.speechSynthesis.cancel();
+        }
+    }
+
+    function speakText(text) {
+        if (!isVoiceActive || !window.speechSynthesis) return;
+        window.speechSynthesis.cancel(); // Önceki seslendirmeyi durdur
+        
+        const clean = text.replace(/[*_#`]/g, '');
+        const utter = new SpeechSynthesisUtterance(clean);
+        utter.lang = 'tr-TR';
+        window.speechSynthesis.speak(utter);
+    }
+
+    function handleEnvChange() {
+        const envSelect = document.getElementById("profEnv");
+        const customEnvGroup = document.getElementById("customEnvGroup");
+        customEnvGroup.style.display = envSelect.value === "Diğer" ? "flex" : "none";
+    }
+
+    function openProfileModal() { document.getElementById('profileModal').style.display = 'flex'; }
+    function closeProfileModal() { document.getElementById('profileModal').style.display = 'none'; }
+
+    function saveProfile() {
+        const fields = ['profCity', 'profEnv', 'customEnvInput', 'profGender', 'profAge', 'profHealth', 'profFinance'];
+        fields.forEach(field => {
+            const el = document.getElementById(field);
+            if(el) localStorage.setItem(field, el.value);
+        });
+        
+        closeProfileModal();
+        updateCityDisplayAndTimes();
+    }
+
+    function loadProfile() {
+        const fields = ['profCity', 'profEnv', 'customEnvInput', 'profGender', 'profAge', 'profHealth', 'profFinance'];
+        fields.forEach(field => {
+            const savedVal = localStorage.getItem(field);
+            if(savedVal !== null && document.getElementById(field)) {
+                document.getElementById(field).value = savedVal;
+            }
+        });
+        
+        if(!localStorage.getItem('profCity')) {
+            document.getElementById('profCity').value = 'Kırıkkale';
+        }
+        
+        handleEnvChange();
     }
 </script>
+
 </body>
 </html>
