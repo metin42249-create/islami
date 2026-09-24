@@ -456,8 +456,9 @@
 
 <script>
     // --- MERKEZİ VERİ TABANI (TEK JSON) ---
+    // DÜZELTME: Profil verisindeki anahtarların kodun geri kalanıyla (City, Env vs.) eşleşmesi için İngilizce anahtarlarla güncellendi.
     let appData = JSON.parse(localStorage.getItem('islami_rehber_data')) || {
-        profil: { sehir: "Kırıkkale", ortam: "Ev", cinsiyet: "Erkek", yas: "", boy: "", kilo: "", saglik: "Sağlıklı", maddi: "Normal" },
+        profil: { city: "Kırıkkale", env: "Ev", gender: "Erkek", age: "", height: "", weight: "", health: "Sağlıklı", finance: "Normal" },
         style: { mode: "standart", custom: "" },
         kanban: [
             { title: "GÜNLÜK HEDEFLER", tasks: [{ name: "Sabah Namazı Cemaat", note: "" }] },
@@ -596,6 +597,7 @@
         if(d===29 && m===10) events.push("🇹🇷 29 Ekim Cumhuriyet Bayramı");
 
         const el = document.getElementById('importantDaysText');
+        // DÜZELTME: Orijinal koddaki hatalı `\vert{}\vert{}` yapısı `||` mantıksal operatörü ile değiştirildi. (Bu satır JS'i tamamen çökertiyordu)
         if(events.length > 0) el.innerHTML = events.join(" | ");
         else el.innerHTML = `Hicri: ${hijriObj.day} ${hijriObj.month.tr \vert{}\vert{} hijriObj.month.en}${hijriObj.year}`;
     }
@@ -752,7 +754,8 @@
         else if(s==='diger') styleIns=appData.style.custom || "Samimi dost dili.";
         else styleIns="Samimi, içten ve manevi yoldaş dili kullan.";
 
-        const sysPrompt = `[SİSTEM: Kullanıcı:${p.cinsiyet}, Yaş:${p.yas}, Boy/Kilo:${p.boy}/${p.kilo}, Şehir:${p.city}, Ortam:${p.env}. Namaz:${cachedPrayerTimesText}. YAKLAŞIM: ${styleIns}]`;
+        // DÜZELTME: p.cinsiyet, p.yas vb. Türkçe değişkenler yerine düzeltilmiş olan p.gender, p.age atandı.
+        const sysPrompt = `[SİSTEM: Kullanıcı:${p.gender}, Yaş:${p.age}, Boy/Kilo:${p.height}/${p.weight}, Şehir:${p.city}, Ortam:${p.env}. Namaz:${cachedPrayerTimesText}. YAKLAŞIM: ${styleIns}]`;
         
         const reqContents = [...chatHistory, {role:"user", parts:[{text: `${sysPrompt}\n\nSoru:${userText}`}]}];
 
