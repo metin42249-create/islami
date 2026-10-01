@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>İslâmî Zeka - Manevi Yoldaş & Video Arşivi</title>
+    <title>İslâmî Zeka - Manevi Yoldaş & Yönlendirme Rehberi</title>
     
     <!-- FontAwesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -63,7 +63,7 @@
             position: relative;
         }
 
-        /* HEADER */
+        /* HEADER & MODE SWITCHER */
         header {
             background-color: var(--primary);
             color: white;
@@ -106,18 +106,67 @@
         .icon-btn.active { color: var(--accent); opacity: 1; }
         .icon-btn:hover { opacity: 1; transform: scale(1.1); }
 
-        /* İÇERİK ALANI (Tek Sayfa Kaydırma) */
+        /* MOD SEÇİCİ TABLARI */
+        .mode-nav {
+            display: flex;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 4px;
+            border-radius: 10px;
+            gap: 4px;
+        }
+
+        .mode-tab {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            background: transparent;
+            color: white;
+            font-size: 0.88rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            opacity: 0.7;
+        }
+
+        .mode-tab.active {
+            background: var(--primary-light);
+            opacity: 1;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        /* BÖLÜM ALANLARI */
         .content-area {
             flex: 1;
             overflow-y: auto;
             position: relative;
             display: flex;
             flex-direction: column;
-            padding: 16px;
-            gap: 16px;
         }
 
-        /* YER VE DURUM BİLGİSİ */
+        .view-panel {
+            display: none;
+            height: 100%;
+            flex-direction: column;
+        }
+
+        .view-panel.active {
+            display: flex;
+        }
+
+        /* YÖNLENDİRME MODU TASARIMI */
+        .guidance-container {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            overflow-y: auto;
+        }
+
         .location-status-bar {
             background-color: var(--bot-msg);
             border: 1px solid var(--border-color);
@@ -187,132 +236,63 @@
         .prayer-name { font-size: 0.7rem; opacity: 0.8; font-weight: 600; }
         .prayer-time { font-size: 0.82rem; font-weight: 700; color: var(--primary-light); margin-top: 4px; }
 
-        /* VİDEO BÖLÜMÜ (Yeni Entegre Edilen) */
-        .video-section {
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+        }
+
+        .guide-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: var(--radius);
             padding: 16px;
             display: flex;
             flex-direction: column;
-            gap: 16px;
-        }
-
-        .section-header {
-            font-size: 1.05rem;
-            font-weight: 600;
-            color: var(--primary-light);
-            display: flex;
             align-items: center;
-            gap: 8px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
-        }
-
-        .categories {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .category-btn {
-            background-color: var(--bot-msg);
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-            padding: 8px 16px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            border-radius: 20px;
+            text-align: center;
+            gap: 10px;
             cursor: pointer;
             transition: var(--transition);
         }
 
-        .category-btn:hover, .category-btn.active {
-            background-color: var(--primary-light);
-            color: white;
+        .guide-card:hover {
             border-color: var(--primary-light);
-        }
-
-        .video-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 12px;
-        }
-
-        .video-item {
-            background: var(--bot-msg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 16px;
-            transition: var(--transition);
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .video-item:hover {
             transform: translateY(-2px);
             box-shadow: var(--shadow);
-            border-color: var(--primary-light);
         }
 
-        .video-category {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--user-msg);
             color: var(--primary-light);
-            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
         }
 
-        .video-title {
-            font-size: 0.9rem;
-            margin: 0;
-            font-weight: 600;
-            color: var(--text-color);
-        }
-
-        .video-desc {
-            font-size: 0.8rem;
-            opacity: 0.8;
-            margin-bottom: auto;
-        }
-
-        .video-link {
-            display: inline-block;
-            background-color: var(--primary-light);
-            color: #fff;
-            text-align: center;
-            text-decoration: none;
-            padding: 8px 15px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            transition: var(--transition);
-            margin-top: 8px;
-        }
-
-        .video-link:hover {
-            background-color: var(--primary);
-        }
+        .guide-card h3 { font-size: 0.95rem; font-weight: 600; }
+        .guide-card p { font-size: 0.78rem; opacity: 0.8; }
 
         /* SOHBET MODU TASARIMI */
-        .chat-section {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
+        .chat-container {
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            height: 100%;
         }
 
         .response-style-bar {
             background: var(--bot-msg);
             border-bottom: 1px solid var(--border-color);
-            padding: 12px 16px;
+            padding: 10px 16px;
             display: flex;
             flex-direction: column;
             gap: 8px;
             font-size: 0.85rem;
+            flex-shrink: 0;
         }
 
         .style-select-wrapper {
@@ -333,7 +313,9 @@
         }
 
         .chat-messages {
+            flex: 1;
             padding: 16px;
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
             gap: 12px;
@@ -432,7 +414,6 @@
             gap: 8px;
             background: var(--card-bg);
             flex-shrink: 0;
-            z-index: 10;
         }
 
         .input-area input {
@@ -491,131 +472,99 @@
                 <button class="icon-btn" onclick="openProfileModal()" title="Profil Ayarları"><i class="fa-solid fa-user-gear"></i></button>
             </div>
         </div>
+        <!-- MOD SEÇİCİ NAVİGASYON -->
+        <div class="mode-nav">
+            <button class="mode-tab active" id="tabGuidance" onclick="switchMode('guidance')">
+                <i class="fa-solid fa-compass"></i> Yönlendirme Modu
+            </button>
+            <button class="mode-tab" id="tabChat" onclick="switchMode('chat')">
+                <i class="fa-solid fa-comments"></i> Sohbet Modu
+            </button>
+        </div>
     </header>
 
-    <!-- TEK SAYFA İÇERİK ALANI -->
-    <div class="content-area" id="mainScrollArea">
-        
-        <!-- 1. Şehir Durum Çubuğu -->
-        <div class="location-status-bar">
-            <div class="location-info">
-                <i class="fa-solid fa-city"></i> Seçili Şehir: <span id="locStatusText">Kırıkkale</span>
-            </div>
-            <button class="btn-small" onclick="openProfileModal()"><i class="fa-solid fa-pen"></i> Değiştir</button>
-        </div>
+    <div class="content-area">
+        <!-- 1. YÖNLENDİRME MODU -->
+        <div class="view-panel active" id="guidanceView">
+            <div class="guidance-container">
+                <!-- Şehir Durum Çubuğu -->
+                <div class="location-status-bar">
+                    <div class="location-info">
+                        <i class="fa-solid fa-city"></i> Seçili Şehir: <span id="locStatusText">Kırıkkale</span>
+                    </div>
+                    <button class="btn-small" onclick="openProfileModal()"><i class="fa-solid fa-pen"></i> Şehri Değiştir</button>
+                </div>
 
-        <!-- 2. Güncel Namaz Vakitleri Paneli -->
-        <div class="prayer-times-bar">
-            <div class="prayer-title">
-                <span><i class="fa-solid fa-clock"></i> Namaz Vakitleri (Diyanet)</span>
-                <small id="prayerDateText">Yükleniyor...</small>
-            </div>
-            <div class="prayer-grid">
-                <div class="prayer-item"><div class="prayer-name">İmsak</div><div class="prayer-time" id="t-fajr">--:--</div></div>
-                <div class="prayer-item"><div class="prayer-name">Güneş</div><div class="prayer-time" id="t-sunrise">--:--</div></div>
-                <div class="prayer-item"><div class="prayer-name">Öğle</div><div class="prayer-time" id="t-dhuhr">--:--</div></div>
-                <div class="prayer-item"><div class="prayer-name">İkindi</div><div class="prayer-time" id="t-asr">--:--</div></div>
-                <div class="prayer-item"><div class="prayer-name">Akşam</div><div class="prayer-time" id="t-maghrib">--:--</div></div>
-                <div class="prayer-item"><div class="prayer-name">Yatsı</div><div class="prayer-time" id="t-isha">--:--</div></div>
-            </div>
-        </div>
+                <!-- Güncel Namaz Vakitleri Paneli -->
+                <div class="prayer-times-bar">
+                    <div class="prayer-title">
+                        <span><i class="fa-solid fa-clock"></i> Namaz Vakitleri (Diyanet)</span>
+                        <small id="prayerDateText">Yükleniyor...</small>
+                    </div>
+                    <div class="prayer-grid">
+                        <div class="prayer-item"><div class="prayer-name">İmsak</div><div class="prayer-time" id="t-fajr">--:--</div></div>
+                        <div class="prayer-item"><div class="prayer-name">Güneş</div><div class="prayer-time" id="t-sunrise">--:--</div></div>
+                        <div class="prayer-item"><div class="prayer-name">Öğle</div><div class="prayer-time" id="t-dhuhr">--:--</div></div>
+                        <div class="prayer-item"><div class="prayer-name">İkindi</div><div class="prayer-time" id="t-asr">--:--</div></div>
+                        <div class="prayer-item"><div class="prayer-name">Akşam</div><div class="prayer-time" id="t-maghrib">--:--</div></div>
+                        <div class="prayer-item"><div class="prayer-name">Yatsı</div><div class="prayer-time" id="t-isha">--:--</div></div>
+                    </div>
+                </div>
 
-        <!-- 3. Video Arşivi (Kategorize Edilmiş) -->
-        <div class="video-section">
-            <div class="section-header">
-                <i class="fa-solid fa-video"></i> İslami Video Arşivi
-            </div>
-            <div class="categories">
-                <button class="category-btn active" onclick="filterVideos('all')">Tümü</button>
-                <button class="category-btn" onclick="filterVideos('cocuk')">Çocuklar İçin</button>
-                <button class="category-btn" onclick="filterVideos('genclik')">Gençlik & İnanç</button>
-                <button class="category-btn" onclick="filterVideos('kuran')">Kur'an-ı Kerîm</button>
-                <button class="category-btn" onclick="filterVideos('egitici')">Eğitici & Tarih</button>
-                <button class="category-btn" onclick="filterVideos('sunnet')">Sünnet & Ahlak</button>
-                <button class="category-btn" onclick="filterVideos('aile')">Ailece Eğlence</button>
-                <button class="category-btn" onclick="filterVideos('haber')">Haber & Analiz</button>
-                <button class="category-btn" onclick="filterVideos('motivasyon')">Manevi Motivasyon</button>
-            </div>
-        
-            <div class="video-list">
-                <div class="video-item" data-category="cocuk">
-                    <div class="video-category">👶 Çocuklar İçin</div>
-                    <h3 class="video-title">Güzel Ahlak Çizgi Filmi - Doğruluk ve Dürüstlük</h3>
-                    <p class="video-desc">Çocuklar için doğru sözlü olmanın ve dürüstlüğün önemini anlatan eğitici çizgi film.</p>
-                    <a href="https://www.youtube.com/results?search_query=Güzel+Ahlak+Çizgi+Filmi+Doğruluk+ve+Dürüstlük" target="_blank" class="video-link">Videoyu İzle</a>
-                </div>
-                <div class="video-item" data-category="genclik">
-                    <div class="video-category">🚀 Gençlik & İnanç</div>
-                    <h3 class="video-title">Modern Çağda Gençlik, İnanç ve Anlam Arayışı</h3>
-                    <p class="video-desc">Zihin kurcalayan inanç soruları, deizm/ateizm sorgulamaları ve modern çağ çözümleri.</p>
-                    <a href="https://www.youtube.com/results?search_query=Modern+Çağda+Gençlik+İnanç+ve+Anlam+Arayışı" target="_blank" class="video-link">Videoyu İzle</a>
-                </div>
-                <div class="video-item" data-category="kuran">
-                    <div class="video-category">📖 Kur'an-ı Kerîm</div>
-                    <h3 class="video-title">Fatiha Suresi Meali ve Görsel Tefsiri</h3>
-                    <p class="video-desc">Tecvid dersleri, kısa sure ezberleri ve görsel olarak desteklenmiş derinlemesine tefsir anlatımları.</p>
-                    <a href="https://www.youtube.com/results?search_query=Fatiha+Suresi+Meali+ve+Görsel+Tefsiri" target="_blank" class="video-link">Videoyu İzle</a>
-                </div>
-                <div class="video-item" data-category="egitici">
-                    <div class="video-category">📚 Eğitici & Tarih</div>
-                    <h3 class="video-title">İslam Bilim Tarihi ve Altın Çağ Buluşları</h3>
-                    <p class="video-desc">İslam medeniyetinin bilime, tıbba ve astronomiye kazandırdığı büyük buluşların tarihi serüveni.</p>
-                    <a href="https://www.youtube.com/results?search_query=İslam+Bilim+Tarihi+ve+Altın+Çağ+Buluşları" target="_blank" class="video-link">Videoyu İzle</a>
-                </div>
-                <div class="video-item" data-category="sunnet">
-                    <div class="video-category">✨ Sünnet & Ahlak</div>
-                    <h3 class="video-title">Günlük Hayatta Peygamberimiz'in (S.A.V.) Sünnetleri</h3>
-                    <p class="video-desc">Günlük hayat uygulamaları, sofra, uyku ve insan ilişkilerindeki Nebevi ahlak düsturları.</p>
-                    <a href="https://www.youtube.com/results?search_query=Günlük+Hayatta+Peygamberimiz+Sünnetleri" target="_blank" class="video-link">Videoyu İzle</a>
-                </div>
-                <div class="video-item" data-category="aile">
-                    <div class="video-category">👨‍👩‍👧‍👦 Ailece Eğlence</div>
-                    <h3 class="video-title">İslam Coğrafyası ve Şehirleri Belgeseli</h3>
-                    <p class="video-desc">Müslüman aile yapısına uygun, tarihi mirasımızı ve kadim şehirleri tanıtan kültür gezisi.</p>
-                    <a href="https://www.youtube.com/results?search_query=İslam+Coğrafyası+ve+Şehirleri+Belgeseli" target="_blank" class="video-link">Videoyu İzle</a>
-                </div>
-                <div class="video-item" data-category="haber">
-                    <div class="video-category">📰 Haber & Analiz</div>
-                    <h3 class="video-title">İslam Dünyası ve Mazlum Coğrafyalardan Güncel Analizler</h3>
-                    <p class="video-desc">Küresel gelişmelerin yapıcı, tarafsız ve adil bir bakış açısıyla değerlendirilmesi.</p>
-                    <a href="https://www.youtube.com/results?search_query=İslam+Dünyası+ve+Mazlum+Coğrafyalardan+Güncel+Analizler" target="_blank" class="video-link">Videoyu İzle</a>
-                </div>
-                <div class="video-item" data-category="motivasyon">
-                    <div class="video-category">🌿 Manevi Motivasyon</div>
-                    <h3 class="video-title">Stres, Depresyon ve Yalnızlığa Karşı Manevi Reçeteler</h3>
-                    <p class="video-desc">Modern çağın psikolojik yıpranmalarına karşı Kur'an ahlakı ve tevekkül penceresinden çözümler.</p>
-                    <a href="https://www.youtube.com/results?search_query=Stres+Depresyon+ve+Yalnızlığa+Karşı+Manevi+Reçeteler" target="_blank" class="video-link">Videoyu İzle</a>
+                <!-- Hızlı Yönlendirme Kartları -->
+                <div class="cards-grid">
+                    <div class="guide-card" onclick="triggerGuidance('namaz')">
+                        <div class="card-icon"><i class="fa-solid fa-mosque"></i></div>
+                        <h3>İbadet & Namaz</h3>
+                        <p>Vaktin ehemmiyeti ve ibadet sünnetleri</p>
+                    </div>
+                    <div class="guide-card" onclick="triggerGuidance('yemek')">
+                        <div class="card-icon"><i class="fa-solid fa-utensils"></i></div>
+                        <h3>Yeme İçme</h3>
+                        <p>Sofra adabı ve bereket sünnetleri</p>
+                    </div>
+                    <div class="guide-card" onclick="triggerGuidance('ihtiyac')">
+                        <div class="card-icon"><i class="fa-solid fa-restroom"></i></div>
+                        <h3>Temizlik & Hijyen</h3>
+                        <p>Temizlik adabı ve sünnetleri</p>
+                    </div>
+                    <div class="guide-card" onclick="triggerGuidance('danismanlik')">
+                        <div class="card-icon"><i class="fa-solid fa-hand-holding-heart"></i></div>
+                        <h3>Manevi Danışman</h3>
+                        <p>Anlık ruh haline özel tavsiye</p>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- 4. Sohbet & Rehber Modülü -->
-        <div class="chat-section">
-            <div class="response-style-bar">
-                <div class="style-select-wrapper">
-                    <i class="fa-solid fa-sliders"></i>
-                    <label for="responseStyle">Rehber Yaklaşımı:</label>
-                    <select id="responseStyle" onchange="handleStyleChange()">
-                        <option value="standart">Sohbet & Yoldaşlık (Samimi)</option>
-                        <option value="soru_cevap">Peygamberimiz (S.A.V.) bu soruya nasıl cevap verirdi?</option>
-                        <option value="yerimde_olsa">Peygamberimiz benim yerimde/durumumda olsa ne yapardı?</option>
-                        <option value="bunun_yerine">Şu an yaptığımın/düşündüğümün yerine Sünnetteki doğrusu nedir?</option>
-                        <option value="diger">Diğer (Kendi Yönlendirmeni Yaz)</option>
-                    </select>
+        <!-- 2. SOHBET MODU -->
+        <div class="view-panel" id="chatView">
+            <div class="chat-container">
+                <div class="response-style-bar">
+                    <div class="style-select-wrapper">
+                        <i class="fa-solid fa-sliders"></i>
+                        <label for="responseStyle">Rehber Yaklaşımı:</label>
+                        <select id="responseStyle" onchange="handleStyleChange()">
+                            <option value="standart">Sohbet & Yoldaşlık (Samimi)</option>
+                            <option value="soru_cevap">Peygamberimiz (S.A.V.) bu soruya nasıl cevap verirdi?</option>
+                            <option value="yerimde_olsa">Peygamberimiz benim yerimde/durumumda olsa ne yapardı?</option>
+                            <option value="bunun_yerine">Şu an yaptığımın/düşündüğümün yerine Sünnetteki doğrusu nedir?</option>
+                            <option value="diger">Diğer (Kendi Yönlendirmeni Yaz)</option>
+                        </select>
+                    </div>
+                    <!-- Özel rehber yaklaşımı girişi -->
+                    <div id="customStyleGroup" style="display: none; padding-top: 4px;">
+                        <input type="text" id="customStyleInput" placeholder="AI nasıl bir üslup/yaklaşım sergilesin? (Örn: 'Sadece Ayet ve Hadis kaynaklarıyla cevapla')" oninput="saveStylePreferences()">
+                    </div>
                 </div>
-                <!-- Özel rehber yaklaşımı girişi -->
-                <div id="customStyleGroup" style="display: none; padding-top: 4px;">
-                    <input type="text" id="customStyleInput" placeholder="AI nasıl bir üslup/yaklaşım sergilesin? (Örn: 'Sadece Ayet ve Hadis kaynaklarıyla cevapla')" oninput="saveStylePreferences()">
-                </div>
-            </div>
 
-            <div class="chat-messages" id="chatMessages">
-                <div class="message bot-message">
-                    Selamun aleykum. Tüm özelliklere tek sayfadan erişebilir, videoları inceleyebilir veya aklınızdaki soruyu aşağıdan bana yazabilirsiniz.
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message bot-message">
+                        Selamun aleykum. Yönlendirme Modu'ndan hızlı eylem seçebilir veya buradan serbestçe sorunuzu yazabilirsiniz.
+                    </div>
                 </div>
             </div>
         </div>
-        
     </div>
 
     <!-- ALT MESAJ GİRİŞ ALANI -->
@@ -694,6 +643,7 @@
 
 <script>
     // --- DURUM YÖNETİMİ ---
+    let currentMode = 'guidance';
     let chatHistory = [];
     let isVoiceActive = false;
     let cachedPrayerTimesText = "";
@@ -720,6 +670,16 @@
         document.documentElement.setAttribute('data-theme', next);
         localStorage.setItem('appTheme', next);
         document.getElementById('themeBtn').innerHTML = next === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+    }
+
+    // --- MOD DEĞİŞTİRME ---
+    function switchMode(mode) {
+        currentMode = mode;
+        document.getElementById('tabGuidance').classList.toggle('active', mode === 'guidance');
+        document.getElementById('tabChat').classList.toggle('active', mode === 'chat');
+        
+        document.getElementById('guidanceView').classList.toggle('active', mode === 'guidance');
+        document.getElementById('chatView').classList.toggle('active', mode === 'chat');
     }
 
     // --- ALADHAN NAMAZ VAKİTLERİ API ---
@@ -761,25 +721,25 @@
         fetchPrayerTimesByCity(city);
     }
 
-    // --- VİDEO FİLTRELEME İŞLEMLERİ ---
-    function filterVideos(category) {
-        // Aktif buton stilini değiştirme
-        const buttons = document.querySelectorAll('.category-btn');
-        buttons.forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
+    // --- YÖNLENDİRME KART TETİKLEYİCİSİ ---
+    async function triggerGuidance(actionType) {
+        let promptText = "";
 
-        // Videoları filtreleme
-        const videos = document.querySelectorAll('.video-item');
-        videos.forEach(video => {
-            if (category === 'all' || video.getAttribute('data-category') === category) {
-                video.style.display = 'flex';
-            } else {
-                video.style.display = 'none';
-            }
-        });
+        if (actionType === 'namaz') {
+            promptText = `Bulunduğum şehirde namaza hazırlanıyorum. ${cachedPrayerTimesText}. Vaktin ehemmiyeti, sıradaki vakit ve namaz adabı ile ilgili kısa manevi bir rehberlik sunar mısın?`;
+        } else if (actionType === 'yemek') {
+            promptText = "Şu an yemek yiyeceğim. Sofra adabı, yemeğe başlama ve bitirme sünnetleri hakkında ne tavsiye edersin?";
+        } else if (actionType === 'ihtiyac') {
+            promptText = "İhtiyaç molasındayım. Temizlik ve hijyen hususundaki sünnetleri ve adabı hatırlatır mısın?";
+        } else if (actionType === 'danismanlik') {
+            promptText = "Gönlümü ve zihnimi ferahlatacak anlık manevi bir tavsiyeye ihtiyacım var.";
+        }
+
+        switchMode('chat');
+        sendToGemini(promptText);
     }
 
-    // --- YAKLAŞIM STİLİ KONTROLÜ ---
+    // --- YAKLAŞIM STİLİ & DİĞER KONTROLÜ ---
     function handleStyleChange() {
         const styleSelect = document.getElementById('responseStyle');
         const customGroup = document.getElementById('customStyleGroup');
@@ -808,6 +768,8 @@
         const text = input.value.trim();
         if (!text) return;
         input.value = "";
+
+        if (currentMode === 'guidance') switchMode('chat');
         sendToGemini(text);
     }
 
@@ -856,6 +818,7 @@ Kullanıcı Şehir: ${city}, Ortam:${env}, Cinsiyet: ${gender}, Yaş Grubu: ${ag
 Anlık Saat: ${timeStr}. ${cachedPrayerTimesText}${styleInstruction}
 GÖREV: Kullanıcıya samimi, Kur'an ve Sünnet ışığında, belirtilen YAKLAŞIM TARZINA sadık kalarak yol göster. Türkçe cevap ver.]`;
 
+        // İstek gönderirken sohbet geçmişini temiz bir formatta tutuyoruz
         const requestContents = [
             ...chatHistory,
             { role: "user", parts: [{ text: `${systemPrompt}\n\nKullanıcı Mesajı: ${userText}` }] }
@@ -874,6 +837,7 @@ GÖREV: Kullanıcıya samimi, Kur'an ve Sünnet ışığında, belirtilen YAKLA�
 
             if (data.candidates && data.candidates[0].content.parts[0].text) {
                 const reply = data.candidates[0].content.parts[0].text;
+                // Sohbet geçmişine temiz kullanıcı mesajını ve model cevabını kaydediyoruz
                 chatHistory.push({ role: "user", parts: [{ text: userText }] });
                 chatHistory.push({ role: "model", parts: [{ text: reply }] });
                 
@@ -888,18 +852,13 @@ GÖREV: Kullanıcıya samimi, Kur'an ve Sünnet ışığında, belirtilen YAKLA�
         }
     }
 
-    function scrollToEnd() {
-        const scrollArea = document.getElementById('mainScrollArea');
-        scrollArea.scrollTop = scrollArea.scrollHeight;
-    }
-
     function appendMessage(text, className) {
         const container = document.getElementById('chatMessages');
         const msg = document.createElement('div');
         msg.className = `message ${className}`;
         msg.innerHTML = marked.parse(text);
         container.appendChild(msg);
-        scrollToEnd();
+        container.scrollTop = container.scrollHeight;
     }
 
     function showLoading() {
@@ -909,7 +868,7 @@ GÖREV: Kullanıcıya samimi, Kur'an ve Sünnet ışığında, belirtilen YAKLA�
         loader.className = 'message bot-message typing-indicator';
         loader.innerHTML = '<span></span><span></span><span></span>';
         container.appendChild(loader);
-        scrollToEnd();
+        container.scrollTop = container.scrollHeight;
     }
 
     function removeLoading() {
@@ -931,7 +890,7 @@ GÖREV: Kullanıcıya samimi, Kur'an ve Sünnet ışığında, belirtilen YAKLA�
 
     function speakText(text) {
         if (!isVoiceActive || !window.speechSynthesis) return;
-        window.speechSynthesis.cancel(); 
+        window.speechSynthesis.cancel(); // Önceki seslendirmeyi durdur
         
         const clean = text.replace(/[*_#`]/g, '');
         const utter = new SpeechSynthesisUtterance(clean);
